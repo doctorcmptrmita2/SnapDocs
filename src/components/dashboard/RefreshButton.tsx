@@ -20,23 +20,21 @@ export function RefreshButton({ projectSlug }: RefreshButtonProps) {
     try {
       const res = await fetch(`/api/projects/${projectSlug}/refresh`, {
         method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
       });
 
-      if (res.redirected) {
-        setStatus('success');
-        setTimeout(() => {
-          router.push(res.url);
-        }, 1000);
-        return;
-      }
+      const data = await res.json();
 
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || 'Refresh failed');
       }
 
       setStatus('success');
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 1000);
     } catch (err) {
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Something went wrong');
