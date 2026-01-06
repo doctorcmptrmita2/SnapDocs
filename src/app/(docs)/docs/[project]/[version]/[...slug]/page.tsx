@@ -8,7 +8,7 @@
  * Example: /docs/my-project/main/getting-started
  */
 
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Sidebar } from '@/components/docs/Sidebar';
 import { TableOfContents } from '@/components/docs/TableOfContents';
 import { ProseContent } from '@/components/docs/ProseContent';
@@ -27,6 +27,11 @@ interface PageProps {
 export default async function DocPage({ params }: PageProps) {
   const { project, version, slug } = await params;
   const docSlug = slug.join('/');
+
+  // Redirect /index to root (index.md is the homepage)
+  if (docSlug === 'index') {
+    redirect(`/docs/${project}/${version}`);
+  }
 
   // Fetch from Edge cache - no GitHub API call
   const [doc, nav] = await Promise.all([
