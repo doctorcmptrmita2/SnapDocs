@@ -31,9 +31,10 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
     notFound();
   }
 
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
   const docsUrl = project.customDomain 
     ? `https://${project.customDomain}` 
-    : `http://localhost:3000/docs/${project.slug}/main`;
+    : `${baseUrl}/docs/${project.slug}/${project.branch}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -88,7 +89,7 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
                   URL Slug
                 </label>
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-500 text-sm">localhost:3000/docs/</span>
+                  <span className="text-slate-500 text-sm">{baseUrl}/docs/</span>
                   <input
                     type="text"
                     defaultValue={project.slug}
