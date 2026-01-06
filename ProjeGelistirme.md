@@ -22,15 +22,15 @@
 - [x] **Copy Code Button** - Kod bloklarında kopyalama ✅
 - [x] **Dark Mode** - Tema değiştirici ✅
 - [x] **Arama (Search)** - Tüm dokümanlarda full-text search ✅
-- [ ] **Breadcrumb** - Navigasyon yolu gösterimi
-- [ ] **Prev/Next Navigation** - Dokümanlar arası geçiş
-- [ ] **Mobile Responsive** - Hamburger menü, touch-friendly
+- [x] **Breadcrumb** - Navigasyon yolu gösterimi ✅
+- [x] **Prev/Next Navigation** - Dokümanlar arası geçiş ✅
+- [x] **Mobile Responsive** - Hamburger menü, touch-friendly ✅
 
 ### 2. Versiyonlama (Git-Native)
-- [ ] Branch listesi çekme (main, develop, etc.)
-- [ ] Tag listesi çekme (v1.0.0, v2.0.0)
-- [ ] Version dropdown selector
-- [ ] Her versiyon için ayrı cache
+- [x] Branch listesi çekme (main, develop, etc.) ✅
+- [x] Tag listesi çekme (v1.0.0, v2.0.0) ✅
+- [x] Version dropdown selector ✅
+- [x] Her versiyon için ayrı cache ✅
 
 ### 3. GitHub Webhook (Auto-Sync)
 - [ ] Webhook kurulumunu otomatikleştir

@@ -3,6 +3,9 @@
  * 
  * POST /api/projects/[slug]/refresh
  * Fetches docs from GitHub and updates cache
+ * 
+ * Query params:
+ * - version: specific version to refresh (default: project.branch)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -27,6 +30,8 @@ export async function POST(
     }
 
     const { slug } = await params;
+    const { searchParams } = new URL(request.url);
+    const version = searchParams.get('version');
 
     // Find project
     const project = await db.project.findFirst({
@@ -40,22 +45,25 @@ export async function POST(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
+    // Use specified version or default branch
+    const targetVersion = version || project.branch;
+
     // Fetch docs from GitHub
     const github = createGitHubClient(session.accessToken, project.repoFullName);
     
     let files;
     try {
-      files = await github.getAllMarkdownFiles(project.docsPath, project.branch);
+      files = await github.getAllMarkdownFiles(project.docsPath, targetVersion);
     } catch (error) {
       console.error('GitHub fetch error:', error);
       return NextResponse.json({ 
-        error: `Failed to fetch from GitHub. Make sure ${project.docsPath} exists in your repo.` 
+        error: `Failed to fetch from GitHub. Make sure ${project.docsPath} exists in version "${targetVersion}".` 
       }, { status: 400 });
     }
 
     if (files.length === 0) {
       return NextResponse.json({ 
-        error: `No markdown files found in ${project.docsPath}` 
+        error: `No markdown files found in ${project.docsPath} for version "${targetVersion}"` 
       }, { status: 400 });
     }
 
@@ -91,8 +99,8 @@ export async function POST(
     const nav = buildNavigation(docs, project.docsPath);
 
     // Update cache
-    await invalidateProjectCache(project.slug, project.branch);
-    await cacheProject(project.slug, project.branch, nav, docs);
+    await invalidateProjectCache(project.slug, targetVersion);
+    await cacheProject(project.slug, targetVersion, nav, docs);
 
     // Update project timestamp
     await db.project.update({
@@ -100,9 +108,19 @@ export async function POST(
       data: { updatedAt: new Date() },
     });
 
+    // Return JSON response for API calls, redirect for form submissions
+    const acceptHeader = request.headers.get('accept');
+    if (acceptHeader?.includes('application/json')) {
+      return NextResponse.json({ 
+        success: true, 
+        version: targetVersion,
+        docsCount: Object.keys(docs).length 
+      });
+    }
+
     // Redirect back to docs
     return NextResponse.redirect(
-      new URL(`/docs/${project.slug}/${project.branch}`, request.url)
+      new URL(`/docs/${project.slug}/${targetVersion}`, request.url)
     );
   } catch (error) {
     console.error('Refresh error:', error);

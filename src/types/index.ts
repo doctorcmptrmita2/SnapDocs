@@ -58,6 +58,12 @@ export interface CachedProject {
   updatedAt: string;
 }
 
+export interface VersionsCache {
+  branches: string[];
+  tags: string[];
+  default: string;
+}
+
 // Webhook Payload
 export interface WebhookPayload {
   ref: string;

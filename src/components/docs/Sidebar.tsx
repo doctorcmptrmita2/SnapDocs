@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRight, FileText, Folder } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VersionSelector } from './VersionSelector';
 import type { NavItem } from '@/types';
 
 interface SidebarProps {
@@ -16,6 +17,11 @@ export function Sidebar({ nav, projectSlug, version }: SidebarProps) {
   return (
     <aside className="w-56 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900">
       <nav className="sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto p-4">
+        {/* Version Selector */}
+        <div className="mb-4 pb-4 border-b border-slate-200 dark:border-slate-700">
+          <VersionSelector projectSlug={projectSlug} currentVersion={version} />
+        </div>
+        
         <NavList items={nav} projectSlug={projectSlug} version={version} depth={0} />
       </nav>
     </aside>

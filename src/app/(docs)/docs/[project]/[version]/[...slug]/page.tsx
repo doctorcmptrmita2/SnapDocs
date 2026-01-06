@@ -12,6 +12,8 @@ import { notFound } from 'next/navigation';
 import { Sidebar } from '@/components/docs/Sidebar';
 import { TableOfContents } from '@/components/docs/TableOfContents';
 import { ProseContent } from '@/components/docs/ProseContent';
+import { Breadcrumb } from '@/components/docs/Breadcrumb';
+import { PrevNextNav } from '@/components/docs/PrevNextNav';
 import { getCachedDoc, getCachedNav } from '@/lib/cache';
 
 interface PageProps {
@@ -38,12 +40,21 @@ export default async function DocPage({ params }: PageProps) {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <Sidebar nav={nav} projectSlug={project} version={version} />
+      {/* Sidebar - hidden on mobile */}
+      <div className="hidden lg:block">
+        <Sidebar nav={nav} projectSlug={project} version={version} />
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 py-8 px-8 lg:px-12">
+      <main className="flex-1 min-w-0 py-8 px-4 sm:px-8 lg:px-12">
         <article className="max-w-3xl">
+          <Breadcrumb 
+            projectSlug={project} 
+            version={version} 
+            docSlug={docSlug}
+            docTitle={doc.title}
+          />
+          
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
             {doc.title}
           </h1>
@@ -55,11 +66,20 @@ export default async function DocPage({ params }: PageProps) {
           )}
 
           <ProseContent html={doc.content} />
+          
+          <PrevNextNav 
+            nav={nav} 
+            currentSlug={docSlug}
+            projectSlug={project}
+            version={version}
+          />
         </article>
       </main>
 
-      {/* Table of Contents */}
-      <TableOfContents headings={doc.headings} />
+      {/* Table of Contents - hidden on mobile */}
+      <div className="hidden xl:block">
+        <TableOfContents headings={doc.headings} />
+      </div>
     </div>
   );
 }

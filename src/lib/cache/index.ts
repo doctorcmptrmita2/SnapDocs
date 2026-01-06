@@ -11,8 +11,8 @@
  */
 
 import Redis from 'ioredis';
-import type { ParsedDoc, NavItem, CachedProject } from '@/types';
-import { getProjectCacheKey, getDocCacheKey, getNavCacheKey } from '@/lib/utils';
+import type { ParsedDoc, NavItem, CachedProject, VersionsCache } from '@/types';
+import { getProjectCacheKey, getDocCacheKey, getNavCacheKey, getVersionsCacheKey } from '@/lib/utils';
 
 // Singleton Redis client
 let redis: Redis | null = null;
@@ -179,4 +179,43 @@ export async function checkRedisHealth(): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+
+// Versions cache TTL: 1 hour (shorter since versions change less frequently but should be fresh)
+const VERSIONS_CACHE_TTL = 60 * 60;
+
+/**
+ * Cache project versions (branches + tags)
+ */
+export async function cacheVersions(
+  projectSlug: string,
+  versions: VersionsCache
+): Promise<void> {
+  const client = getRedis();
+  const key = getVersionsCacheKey(projectSlug);
+  await client.setex(key, VERSIONS_CACHE_TTL, JSON.stringify(versions));
+}
+
+/**
+ * Get cached versions
+ */
+export async function getCachedVersions(
+  projectSlug: string
+): Promise<VersionsCache | null> {
+  const client = getRedis();
+  const key = getVersionsCacheKey(projectSlug);
+  const data = await client.get(key);
+  return data ? JSON.parse(data) : null;
+}
+
+/**
+ * Invalidate versions cache
+ */
+export async function invalidateVersionsCache(
+  projectSlug: string
+): Promise<void> {
+  const client = getRedis();
+  const key = getVersionsCacheKey(projectSlug);
+  await client.del(key);
 }

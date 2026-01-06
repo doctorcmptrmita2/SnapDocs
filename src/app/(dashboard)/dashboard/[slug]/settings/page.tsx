@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { RefreshButton } from '@/components/dashboard/RefreshButton';
+import { SyncVersionsButton } from '@/components/dashboard/SyncVersionsButton';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -130,6 +131,16 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
               Use manual refresh if webhook isn't working.
             </p>
             <RefreshButton projectSlug={project.slug} />
+          </div>
+
+          {/* Versions */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <h2 className="font-semibold text-lg mb-4">Versions</h2>
+            <p className="text-slate-500 text-sm mb-4">
+              Sync branches and tags from GitHub to enable version switching in docs.
+              Users can switch between different versions using the dropdown in the sidebar.
+            </p>
+            <SyncVersionsButton projectSlug={project.slug} />
           </div>
 
           {/* Danger Zone */}

@@ -47,3 +47,7 @@ export function getDocCacheKey(projectSlug: string, version: string, docSlug: st
 export function getNavCacheKey(projectSlug: string, version: string): string {
   return `nav:${projectSlug}:${version}`;
 }
+
+export function getVersionsCacheKey(projectSlug: string): string {
+  return `versions:${projectSlug}`;
+}
