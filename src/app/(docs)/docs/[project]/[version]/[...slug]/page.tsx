@@ -11,6 +11,7 @@
 import { notFound } from 'next/navigation';
 import { Sidebar } from '@/components/docs/Sidebar';
 import { TableOfContents } from '@/components/docs/TableOfContents';
+import { ProseContent } from '@/components/docs/ProseContent';
 import { getCachedDoc, getCachedNav } from '@/lib/cache';
 
 interface PageProps {
@@ -36,27 +37,24 @@ export default async function DocPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       {/* Sidebar */}
       <Sidebar nav={nav} projectSlug={project} version={version} />
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0">
-        <article className="max-w-3xl mx-auto px-8 py-12">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+      <main className="flex-1 min-w-0 py-8 px-8 lg:px-12">
+        <article className="max-w-3xl">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
             {doc.title}
           </h1>
           
           {doc.description && (
-            <p className="text-xl text-slate-500 mb-8">
+            <p className="text-lg text-slate-500 dark:text-slate-400 mb-6">
               {doc.description}
             </p>
           )}
 
-          <div
-            className="prose prose-slate max-w-none"
-            dangerouslySetInnerHTML={{ __html: doc.content }}
-          />
+          <ProseContent html={doc.content} />
         </article>
       </main>
 

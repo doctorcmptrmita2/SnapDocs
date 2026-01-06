@@ -34,9 +34,9 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="w-56 hidden xl:block">
-      <div className="sticky top-20">
-        <h4 className="text-sm font-semibold text-slate-900 mb-3">
+    <nav className="w-56 hidden xl:block flex-shrink-0">
+      <div className="sticky top-[73px] p-4">
+        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
           On this page
         </h4>
         <ul className="space-y-2 text-sm">
@@ -52,8 +52,8 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                   className={cn(
                     'block py-1 transition',
                     activeId === heading.id
-                      ? 'text-brand-600 font-medium'
-                      : 'text-slate-500 hover:text-slate-900'
+                      ? 'text-brand-600 dark:text-brand-400 font-medium'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   )}
                 >
                   {heading.text}

@@ -1,8 +1,9 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { Github, Zap } from 'lucide-react';
+import { Github } from 'lucide-react';
 import Link from 'next/link';
+import { Logo } from '@/components/ui/Logo';
 
 export default function LoginPage() {
   return (
@@ -10,11 +11,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <div className="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-2xl">SnapDoc</span>
+          <div className="flex items-center justify-center mb-8">
+            <Logo size="lg" href="/" />
           </div>
 
           {/* Heading */}

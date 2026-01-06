@@ -25,6 +25,11 @@ body {
   color: var(--foreground);
 }
 
+/* Dark mode body */
+.dark body {
+  @apply bg-slate-900 text-slate-100;
+}
+
 /* Shiki code blocks */
 .shiki {
   @apply rounded-lg p-4 text-sm overflow-x-auto;
@@ -32,6 +37,11 @@ body {
 
 .shiki code {
   @apply bg-transparent p-0;
+}
+
+/* Dark mode shiki */
+.dark .shiki {
+  @apply bg-slate-800 !important;
 }
 
 /* Prose customization */
@@ -43,9 +53,57 @@ body {
   @apply my-4;
 }
 
+/* Dark mode prose */
+.dark .prose {
+  @apply text-slate-300;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  @apply text-slate-100;
+}
+
+.dark .prose a {
+  @apply text-brand-400;
+}
+
+.dark .prose strong {
+  @apply text-slate-100;
+}
+
+.dark .prose code {
+  @apply bg-slate-800 text-slate-300;
+}
+
+.dark .prose blockquote {
+  @apply border-slate-700 text-slate-400;
+}
+
+.dark .prose hr {
+  @apply border-slate-700;
+}
+
+.dark .prose thead {
+  @apply border-slate-700;
+}
+
+.dark .prose th {
+  @apply text-slate-300;
+}
+
+.dark .prose tbody tr {
+  @apply border-slate-700;
+}
+
 /* Sidebar active state */
 .nav-link-active {
   @apply bg-brand-50 text-brand-700 border-l-2 border-brand-500;
+}
+
+.dark .nav-link-active {
+  @apply bg-brand-900/30 text-brand-400;
 }
 
 /* Smooth scroll */
@@ -56,4 +114,8 @@ html {
 /* Focus styles */
 *:focus-visible {
   @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+}
+
+.dark *:focus-visible {
+  @apply ring-offset-slate-900;
 }

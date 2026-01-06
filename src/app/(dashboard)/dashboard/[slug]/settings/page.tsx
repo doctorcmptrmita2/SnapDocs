@@ -1,9 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Trash2, RefreshCw } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { RefreshButton } from '@/components/dashboard/RefreshButton';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -128,15 +129,7 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
               Docs are automatically synced when you push to GitHub. 
               Use manual refresh if webhook isn't working.
             </p>
-            <form action={`/api/projects/${project.slug}/refresh`} method="POST">
-              <button
-                type="submit"
-                className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Refresh Cache
-              </button>
-            </form>
+            <RefreshButton projectSlug={project.slug} />
           </div>
 
           {/* Danger Zone */}

@@ -1,4 +1,4 @@
-# SnapDoc.dev v2.0 - Teknik Analiz & MVP Planı
+# RepoDocs.dev v2.0 - Teknik Analiz & MVP Planı
 
 ## 🎯 Vizyon
 **"The Most Reliable & High-Performance Bridge between Git and Docs"**
@@ -9,7 +9,7 @@ Git reposundaki Markdown dosyalarını anında profesyonel dokümantasyon sitesi
 
 ## 🔥 10x Fark: "The Healthy Docs Engine"
 
-| Özellik | Rakipler | SnapDoc |
+| Özellik | Rakipler | RepoDocs |
 |---------|----------|---------|
 | Kurulum | 15-30 dk config | 30 saniye OAuth |
 | Veri Kaynağı | Her istekte API | Edge Cache (10ms) |
@@ -23,7 +23,7 @@ Git reposundaki Markdown dosyalarını anında profesyonel dokümantasyon sitesi
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
-│   GitHub    │────▶│   Webhook    │────▶│  SnapDoc Worker │
+│   GitHub    │────▶│   Webhook    │────▶│  RepoDocs Worker │
 │  (Push)     │     │  Endpoint    │     │  (Parse+Cache)  │
 └─────────────┘     └──────────────┘     └────────┬────────┘
                                                   │
@@ -36,7 +36,7 @@ Git reposundaki Markdown dosyalarını anında profesyonel dokümantasyon sitesi
 
 ### Veri Akışı (Anti-Rate Limit)
 1. Kullanıcı kodu push eder
-2. GitHub Webhook → SnapDoc API tetiklenir
+2. GitHub Webhook → RepoDocs API tetiklenir
 3. Worker: Dosyaları çeker → Parse → Edge KV'ye yazar
 4. Ziyaretçi: GitHub'a gitmeden Edge'den 10ms'de döner
 
@@ -87,7 +87,7 @@ Git reposundaki Markdown dosyalarını anında profesyonel dokümantasyon sitesi
 
 | Plan | Fiyat | Özellikler |
 |------|-------|------------|
-| Hobby | $0 | 1 Public repo, *.snapdoc.dev subdomain |
+| Hobby | $0 | 1 Public repo, *.RepoDocs.dev subdomain |
 | Pro | $12/ay | Sınırsız public, 1 private, custom domain |
 | Team | $29/ay | Sınırsız private, versiyonlama, lint raporu |
 | AI Add-on | +$10/ay | AI Search & Chat (kredi limitli) |
@@ -97,7 +97,7 @@ Git reposundaki Markdown dosyalarını anında profesyonel dokümantasyon sitesi
 ## 📁 Proje Yapısı
 
 ```
-snapdoc/
+RepoDocs/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (marketing)/        # Landing, pricing

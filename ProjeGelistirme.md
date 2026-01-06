@@ -1,4 +1,4 @@
-# SnapDoc.dev - Proje Geliştirme Yol Haritası
+# RepoDocs.dev - Proje Geliştirme Yol Haritası
 
 ## ✅ Tamamlanan (MVP Core)
 
@@ -19,11 +19,11 @@
 ## 🚀 Öncelikli Geliştirmeler (Hafta 1-2)
 
 ### 1. Docs Viewer İyileştirmeleri
-- [ ] **Arama (Search)** - Tüm dokümanlarda full-text search
-- [ ] **Dark Mode** - Tema değiştirici
+- [x] **Copy Code Button** - Kod bloklarında kopyalama ✅
+- [x] **Dark Mode** - Tema değiştirici ✅
+- [x] **Arama (Search)** - Tüm dokümanlarda full-text search ✅
 - [ ] **Breadcrumb** - Navigasyon yolu gösterimi
 - [ ] **Prev/Next Navigation** - Dokümanlar arası geçiş
-- [ ] **Copy Code Button** - Kod bloklarında kopyalama
 - [ ] **Mobile Responsive** - Hamburger menü, touch-friendly
 
 ### 2. Versiyonlama (Git-Native)

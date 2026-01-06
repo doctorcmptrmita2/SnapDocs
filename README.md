@@ -1,4 +1,4 @@
-# SnapDoc.dev v2.0
+# RepoDocs.dev v2.0
 
 > Git to Docs in 30 Seconds
 

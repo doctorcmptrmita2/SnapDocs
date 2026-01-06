@@ -14,11 +14,11 @@ interface SidebarProps {
 
 export function Sidebar({ nav, projectSlug, version }: SidebarProps) {
   return (
-    <nav className="w-64 border-r border-slate-200 bg-white h-screen overflow-y-auto sticky top-0">
-      <div className="p-4">
+    <aside className="w-56 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900">
+      <nav className="sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto p-4">
         <NavList items={nav} projectSlug={projectSlug} version={version} depth={0} />
-      </div>
-    </nav>
+      </nav>
+    </aside>
   );
 }
 
@@ -67,7 +67,7 @@ function NavItemComponent({
   if (hasChildren) {
     return (
       <li>
-        <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700">
+        <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300">
           <Folder className="w-4 h-4 text-slate-400" />
           {item.title}
         </div>
@@ -88,8 +88,8 @@ function NavItemComponent({
         className={cn(
           'flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition',
           isActive
-            ? 'bg-brand-50 text-brand-700 font-medium'
-            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
         )}
       >
         <FileText className="w-4 h-4" />

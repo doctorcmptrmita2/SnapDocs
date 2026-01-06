@@ -63,10 +63,21 @@ export async function POST(
     const docs: Record<string, ParsedDoc> = {};
     
     for (const file of files) {
-      const fileSlug = file.path
-        .replace(project.docsPath, '')
-        .replace(/^\//, '')
-        .replace(/\.mdx?$/, '');
+      // Remove docsPath prefix and .md extension to get clean slug
+      let fileSlug = file.path;
+      
+      // Remove leading slash from docsPath if present
+      const cleanDocsPath = project.docsPath.replace(/^\//, '');
+      
+      // Remove docsPath prefix
+      if (fileSlug.startsWith(cleanDocsPath + '/')) {
+        fileSlug = fileSlug.slice(cleanDocsPath.length + 1);
+      } else if (fileSlug.startsWith(cleanDocsPath)) {
+        fileSlug = fileSlug.slice(cleanDocsPath.length);
+      }
+      
+      // Remove leading slash and .md/.mdx extension
+      fileSlug = fileSlug.replace(/^\//, '').replace(/\.mdx?$/, '');
       
       try {
         const parsed = await parseMarkdown(file.content, fileSlug);
