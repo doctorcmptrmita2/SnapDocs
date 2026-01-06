@@ -96,22 +96,27 @@ function formatTitle(filename: string): string {
 
 /**
  * Find default doc (index.md or first doc)
+ * Returns null for index (it should be shown on root page)
  */
 export function findDefaultDoc(nav: NavItem[]): string | null {
-  // Look for index first
+  // Look for index - but don't redirect to it, it's the homepage
   for (const item of nav) {
     if (item.slug === 'index' || item.slug === 'readme') {
-      return item.path;
-    }
-    if (item.children) {
-      const found = findDefaultDoc(item.children);
-      if (found) return found;
+      // index.md should be shown on the root page, not redirected
+      return null;
     }
   }
   
-  // Return first doc
-  if (nav.length > 0) {
-    return nav[0].children?.[0]?.path || nav[0].path;
+  // No index found, return first non-index doc
+  for (const item of nav) {
+    if (item.slug !== 'index' && item.slug !== 'readme') {
+      if (item.children && item.children.length > 0) {
+        // Return first child that's not index
+        const firstChild = item.children.find(c => c.slug !== 'index' && c.slug !== 'readme');
+        if (firstChild) return firstChild.path;
+      }
+      return item.path;
+    }
   }
   
   return null;
