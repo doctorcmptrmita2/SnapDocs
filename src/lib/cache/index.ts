@@ -19,7 +19,18 @@ let redis: Redis | null = null;
 
 function getRedis(): Redis {
   if (!redis) {
-    redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    
+    // Parse Redis URL to handle authentication properly
+    const url = new URL(redisUrl);
+    const password = url.password || undefined;
+    const host = url.hostname;
+    const port = parseInt(url.port) || 6379;
+    
+    redis = new Redis({
+      host,
+      port,
+      password,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
     });
