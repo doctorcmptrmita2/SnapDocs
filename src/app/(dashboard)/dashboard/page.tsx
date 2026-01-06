@@ -5,6 +5,7 @@ import { Plus, ExternalLink, Settings, FileText, Clock, GitBranch } from 'lucide
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Logo } from '@/components/ui/Logo';
+import { UserMenu } from '@/components/dashboard/UserMenu';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -18,25 +19,20 @@ export default async function DashboardPage() {
     orderBy: { updatedAt: 'desc' },
   });
 
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <div className="w-full px-6 lg:px-8 py-3 flex items-center justify-between">
           <Logo size="sm" />
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-500 hidden sm:block">{session.user.email}</span>
-            <img
-              src={session.user.image || ''}
-              alt={session.user.name || ''}
-              className="w-8 h-8 rounded-full ring-2 ring-slate-100"
-            />
-          </div>
+          <UserMenu user={session.user} />
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <main className="w-full px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
@@ -54,7 +50,7 @@ export default async function DashboardPage() {
 
         {projects.length === 0 ? (
           /* Empty State */
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-lg mx-auto">
             <div className="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-brand-500" />
             </div>
@@ -72,9 +68,9 @@ export default async function DashboardPage() {
           </div>
         ) : (
           /* Projects Grid */
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard key={project.id} project={project} baseUrl={baseUrl} />
             ))}
           </div>
         )}
@@ -83,19 +79,22 @@ export default async function DashboardPage() {
   );
 }
 
-function ProjectCard({ project }: { project: {
-  id: string;
-  name: string;
-  slug: string;
-  repoFullName: string;
-  branch: string;
-  isPrivate: boolean;
-  customDomain: string | null;
-  updatedAt: Date;
-}}) {
+function ProjectCard({ project, baseUrl }: { 
+  project: {
+    id: string;
+    name: string;
+    slug: string;
+    repoFullName: string;
+    branch: string;
+    isPrivate: boolean;
+    customDomain: string | null;
+    updatedAt: Date;
+  };
+  baseUrl: string;
+}) {
   const docsUrl = project.customDomain 
     ? `https://${project.customDomain}` 
-    : `/docs/${project.slug}/main`;
+    : `${baseUrl}/docs/${project.slug}/${project.branch}`;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition group">
