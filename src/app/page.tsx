@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Zap, Shield, GitBranch, Globe, Check, Github, FileText, Clock } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { CookieBanner } from '@/components/ui/CookieBanner';
 
 export default function HomePage() {
   return (
@@ -326,6 +327,9 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Cookie Banner */}
+      <CookieBanner />
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
       <header className="border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center justify-between h-14 px-6">
           <div className="flex items-center gap-3">
-            <Logo size="sm" />
+            <Logo size="sm" href="/dashboard" />
             <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-700" />
             <Link href="/dashboard" className="text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white transition">
               Projects

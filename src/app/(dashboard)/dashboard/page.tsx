@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       <header className="border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center justify-between h-14 px-6">
           <div className="flex items-center gap-8">
-            <Logo size="sm" />
+            <Logo size="sm" href="/dashboard" />
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/dashboard" className="text-sm font-medium text-slate-900 dark:text-white">
                 Projects
