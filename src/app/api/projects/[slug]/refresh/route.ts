@@ -51,19 +51,22 @@ export async function POST(
     // Fetch docs from GitHub
     const github = createGitHubClient(session.accessToken, project.repoFullName);
     
+    // Clean docsPath - remove leading slash
+    const cleanDocsPath = project.docsPath.replace(/^\//, '');
+    
     let files;
     try {
-      files = await github.getAllMarkdownFiles(project.docsPath, targetVersion);
+      files = await github.getAllMarkdownFiles(cleanDocsPath, targetVersion);
     } catch (error) {
       console.error('GitHub fetch error:', error);
       return NextResponse.json({ 
-        error: `Failed to fetch from GitHub. Make sure ${project.docsPath} exists in version "${targetVersion}".` 
+        error: `Failed to fetch from GitHub. Make sure "${cleanDocsPath}" folder exists in version "${targetVersion}".` 
       }, { status: 400 });
     }
 
     if (files.length === 0) {
       return NextResponse.json({ 
-        error: `No markdown files found in ${project.docsPath} for version "${targetVersion}"` 
+        error: `No markdown files found in "${cleanDocsPath}" for version "${targetVersion}"` 
       }, { status: 400 });
     }
 
@@ -73,9 +76,6 @@ export async function POST(
     for (const file of files) {
       // Remove docsPath prefix and .md extension to get clean slug
       let fileSlug = file.path;
-      
-      // Remove leading slash from docsPath if present
-      const cleanDocsPath = project.docsPath.replace(/^\//, '');
       
       // Remove docsPath prefix
       if (fileSlug.startsWith(cleanDocsPath + '/')) {

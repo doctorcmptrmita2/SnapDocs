@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, ExternalLink, Settings, FileText, Clock, GitBranch } from 'lucide-react';
+import { Plus, ExternalLink, Settings, GitBranch, Lock } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Logo } from '@/components/ui/Logo';
@@ -22,26 +22,29 @@ export default async function DashboardPage() {
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="w-full px-6 lg:px-8 py-3 flex items-center justify-between">
-          <Logo size="sm" />
+      <header className="border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between h-14 px-6">
+          <div className="flex items-center gap-8">
+            <Logo size="sm" />
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/dashboard" className="text-sm font-medium text-slate-900 dark:text-white">
+                Projects
+              </Link>
+            </nav>
+          </div>
           <UserMenu user={session.user} />
         </div>
       </header>
 
       {/* Content */}
-      <main className="w-full px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Projects</h1>
-            <p className="text-slate-500 text-sm mt-1">Manage your documentation sites</p>
-          </div>
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Projects</h1>
           <Link
             href="/dashboard/new"
-            className="bg-brand-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-600 transition flex items-center gap-2 shadow-sm w-fit"
+            className="inline-flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition"
           >
             <Plus className="w-4 h-4" />
             New Project
@@ -49,28 +52,31 @@ export default async function DashboardPage() {
         </div>
 
         {projects.length === 0 ? (
-          /* Empty State */
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-lg mx-auto">
-            <div className="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-brand-500" />
+          <div className="border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-12 text-center">
+            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Plus className="w-6 h-6 text-slate-400" />
             </div>
-            <h3 className="font-semibold text-lg mb-2">No projects yet</h3>
-            <p className="text-slate-500 mb-6 max-w-sm mx-auto">
-              Connect a GitHub repository to create your first documentation site
+            <h3 className="font-medium text-slate-900 dark:text-white mb-2">No projects yet</h3>
+            <p className="text-slate-500 text-sm mb-6">
+              Create your first documentation site
             </p>
             <Link
               href="/dashboard/new"
-              className="bg-brand-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-600 transition inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition"
             >
               <Plus className="w-4 h-4" />
-              Create your first project
+              New Project
             </Link>
           </div>
         ) : (
-          /* Projects Grid */
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} baseUrl={baseUrl} />
+          <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+            {projects.map((project, index) => (
+              <ProjectRow 
+                key={project.id} 
+                project={project} 
+                baseUrl={baseUrl}
+                isLast={index === projects.length - 1}
+              />
             ))}
           </div>
         )}
@@ -79,7 +85,7 @@ export default async function DashboardPage() {
   );
 }
 
-function ProjectCard({ project, baseUrl }: { 
+function ProjectRow({ project, baseUrl, isLast }: { 
   project: {
     id: string;
     name: string;
@@ -91,72 +97,51 @@ function ProjectCard({ project, baseUrl }: {
     updatedAt: Date;
   };
   baseUrl: string;
+  isLast: boolean;
 }) {
   const docsUrl = project.customDomain 
     ? `https://${project.customDomain}` 
     : `${baseUrl}/docs/${project.slug}/${project.branch}`;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition group">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-            {project.name.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900">{project.name}</h3>
-            <p className="text-xs text-slate-500">{project.repoFullName}</p>
-          </div>
+    <div className={`flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition ${!isLast ? 'border-b border-slate-200 dark:border-slate-800' : ''}`}>
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
+          {project.name.charAt(0).toUpperCase()}
         </div>
-        {project.isPrivate && (
-          <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded text-xs font-medium">
-            Private
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
-        <div className="flex items-center gap-1">
-          <GitBranch className="w-3.5 h-3.5" />
-          {project.branch}
-        </div>
-        <div className="flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" />
-          {formatRelativeTime(project.updatedAt)}
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-slate-900 dark:text-white">{project.name}</h3>
+            {project.isPrivate && <Lock className="w-3.5 h-3.5 text-slate-400" />}
+          </div>
+          <div className="flex items-center gap-3 mt-0.5">
+            <span className="text-sm text-slate-500">{project.repoFullName}</span>
+            <span className="flex items-center gap-1 text-xs text-slate-400">
+              <GitBranch className="w-3 h-3" />
+              {project.branch}
+            </span>
+          </div>
         </div>
       </div>
-
-      <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
+      
+      <div className="flex items-center gap-2">
         <a
           href={docsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 bg-slate-50 text-slate-700 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 transition flex items-center justify-center gap-1.5"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
         >
           <ExternalLink className="w-3.5 h-3.5" />
-          View Docs
+          View
         </a>
         <Link
           href={`/dashboard/${project.slug}/settings`}
-          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-3.5 h-3.5" />
+          Settings
         </Link>
       </div>
     </div>
   );
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
-  return date.toLocaleDateString();
 }

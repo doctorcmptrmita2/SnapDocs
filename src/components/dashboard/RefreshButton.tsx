@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw, Check, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface RefreshButtonProps {
   projectSlug: string;
@@ -20,9 +21,7 @@ export function RefreshButton({ projectSlug }: RefreshButtonProps) {
     try {
       const res = await fetch(`/api/projects/${projectSlug}/refresh`, {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: { 'Accept': 'application/json' },
       });
 
       const data = await res.json();
@@ -33,45 +32,43 @@ export function RefreshButton({ projectSlug }: RefreshButtonProps) {
 
       setStatus('success');
       setTimeout(() => {
+        setStatus('idle');
         router.refresh();
-      }, 1000);
+      }, 2000);
     } catch (err) {
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Something went wrong');
+      setTimeout(() => setStatus('idle'), 3000);
     }
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-3">
+      {status === 'error' && (
+        <span className="text-sm text-red-600 flex items-center gap-1">
+          <AlertCircle className="w-3.5 h-3.5" />
+          {error}
+        </span>
+      )}
+      {status === 'success' && (
+        <span className="text-sm text-green-600 flex items-center gap-1">
+          <Check className="w-3.5 h-3.5" />
+          Synced
+        </span>
+      )}
       <button
         onClick={handleRefresh}
         disabled={status === 'loading'}
-        className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-      >
-        {status === 'loading' ? (
-          <>
-            <RefreshCw className="w-4 h-4 animate-spin" />
-            Refreshing...
-          </>
-        ) : status === 'success' ? (
-          <>
-            <Check className="w-4 h-4 text-green-600" />
-            Done! Redirecting...
-          </>
-        ) : (
-          <>
-            <RefreshCw className="w-4 h-4" />
-            Refresh Cache
-          </>
+        className={cn(
+          'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition',
+          'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
+          'hover:bg-slate-200 dark:hover:bg-slate-700',
+          'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
+      >
+        <RefreshCw className={cn('w-3.5 h-3.5', status === 'loading' && 'animate-spin')} />
+        {status === 'loading' ? 'Syncing...' : 'Refresh'}
       </button>
-      
-      {status === 'error' && (
-        <div className="mt-3 flex items-start gap-2 text-red-600 text-sm">
-          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
     </div>
   );
 }
