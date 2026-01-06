@@ -21,11 +21,24 @@ function getRedis(): Redis {
   if (!redis) {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     
-    // Parse Redis URL to handle authentication properly
-    const url = new URL(redisUrl);
-    const password = url.password || undefined;
-    const host = url.hostname;
-    const port = parseInt(url.port) || 6379;
+    // Parse Redis URL - handle both formats:
+    // redis://password@host:port
+    // redis://username:password@host:port
+    let host = 'localhost';
+    let port = 6379;
+    let password: string | undefined;
+    
+    try {
+      const url = new URL(redisUrl);
+      host = url.hostname;
+      port = parseInt(url.port) || 6379;
+      // Password can be in url.password or if username is 'default', use password
+      password = url.password || undefined;
+    } catch {
+      console.error('Failed to parse REDIS_URL, using defaults');
+    }
+    
+    console.log(`Connecting to Redis at ${host}:${port} with password: ${password ? 'yes' : 'no'}`);
     
     redis = new Redis({
       host,
@@ -36,7 +49,11 @@ function getRedis(): Redis {
     });
     
     redis.on('error', (err) => {
-      console.error('Redis connection error:', err);
+      console.error('Redis connection error:', err.message);
+    });
+    
+    redis.on('connect', () => {
+      console.log('Redis connected successfully');
     });
   }
   return redis;
