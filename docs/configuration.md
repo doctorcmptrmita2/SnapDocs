@@ -1,12 +1,12 @@
 ---
 title: Configuration
-description: Configure your SnapDoc project settings
+description: Configure your RepoDocs project settings
 order: 3
 ---
 
 # Configuration
 
-SnapDoc is designed to work with zero configuration, but you can customize various settings.
+RepoDocs is designed to work with zero configuration, but you can customize various settings.
 
 ## Project Settings
 
@@ -26,12 +26,12 @@ Access settings from your dashboard: **Dashboard → Project → Settings**
 Connect your own domain:
 
 1. Add your domain in settings
-2. Create a CNAME record pointing to `snapdoc.dev`
+2. Create a CNAME record pointing to `repodocs.dev`
 3. Wait for DNS propagation (up to 24h)
 4. SSL certificate is auto-provisioned
 
 ```dns
-docs.example.com  CNAME  snapdoc.dev
+docs.example.com  CNAME  repodocs.dev
 ```
 
 ## Environment Variables
@@ -40,7 +40,7 @@ For self-hosted deployments:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:pass@localhost:5432/snapdoc"
+DATABASE_URL="postgresql://user:pass@localhost:5432/repodocs"
 
 # Redis Cache
 REDIS_URL="redis://localhost:6379"
@@ -62,7 +62,7 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: snapdoc
+      POSTGRES_DB: repodocs
       
   redis:
     image: redis:7-alpine
@@ -84,7 +84,7 @@ docker-compose up -d
 
 ## Webhook Configuration
 
-SnapDoc automatically creates a webhook when you add a project. If you need to set it up manually:
+RepoDocs automatically creates a webhook when you add a project. If you need to set it up manually:
 
 1. Go to your repo → Settings → Webhooks
 2. Add webhook URL: `https://your-domain/api/webhook/github`

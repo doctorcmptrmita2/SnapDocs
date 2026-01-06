@@ -1,12 +1,12 @@
 ---
 title: Getting Started
-description: Create your first SnapDoc project in under a minute
+description: Create your first RepoDocs project in under a minute
 order: 2
 ---
 
 # Getting Started
 
-This guide will help you set up your first documentation site with SnapDoc.
+This guide will help you set up your first documentation site with RepoDocs.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ This guide will help you set up your first documentation site with SnapDoc.
 Click the **"Get Started"** button on the homepage and sign in with your GitHub account.
 
 ```
-https://snapdoc.dev/login
+https://repodocs.dev/login
 ```
 
 We'll request access to your repositories to fetch documentation files.
@@ -35,12 +35,12 @@ We'll request access to your repositories to fetch documentation files.
 Your documentation is now live! Access it at:
 
 ```
-https://snapdoc.dev/docs/your-project/main
+https://repodocs.dev/docs/your-project/main
 ```
 
 ## Folder Structure
 
-SnapDoc automatically generates navigation from your folder structure:
+RepoDocs automatically generates navigation from your folder structure:
 
 ```
 docs/
@@ -75,5 +75,5 @@ icon: book
 
 ## Next Steps
 
-- [Configuration](/docs/snapdocs/main/configuration) - Advanced settings
-- [Markdown Guide](/docs/snapdocs/main/guides/markdown) - Supported syntax
+- [Configuration](/docs/repodocs/main/configuration) - Advanced settings
+- [Markdown Guide](/docs/repodocs/main/guides/markdown) - Supported syntax

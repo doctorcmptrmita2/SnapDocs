@@ -1,12 +1,12 @@
 ---
 title: Deployment
-description: Deploy SnapDoc to your own server or cloud
+description: Deploy RepoDocs to your own server or cloud
 order: 4
 ---
 
 # Deployment
 
-SnapDoc can be deployed anywhere that runs Node.js and Docker.
+RepoDocs can be deployed anywhere that runs Node.js and Docker.
 
 ## Self-Hosted (Recommended)
 
@@ -21,8 +21,8 @@ SnapDoc can be deployed anywhere that runs Node.js and Docker.
 
 ```bash
 # Clone the repository
-git clone https://github.com/doctorcmptrmita2/SnapDocs.git
-cd SnapDocs
+git clone https://github.com/yourusername/RepoDocs.git
+cd RepoDocs
 
 # Copy environment file
 cp .env.example .env
@@ -127,5 +127,5 @@ curl http://localhost:3000/api/health
 redis-cli ping
 
 # Check PostgreSQL
-psql -U snapdoc -c "SELECT 1"
+psql -U repodocs -c "SELECT 1"
 ```

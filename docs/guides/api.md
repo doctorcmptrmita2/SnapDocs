@@ -1,12 +1,12 @@
 ---
 title: API Reference
-description: SnapDoc REST API documentation
+description: RepoDocs REST API documentation
 order: 2
 ---
 
 # API Reference
 
-SnapDoc provides a REST API for programmatic access.
+RepoDocs provides a REST API for programmatic access.
 
 ## Authentication
 
@@ -14,7 +14,7 @@ All API requests require authentication via session cookie or API key.
 
 ```bash
 curl -H "Authorization: Bearer YOUR_API_KEY" \
-  https://snapdoc.dev/api/projects
+  https://repodocs.dev/api/projects
 ```
 
 ## Endpoints

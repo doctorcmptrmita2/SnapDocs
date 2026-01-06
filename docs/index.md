@@ -1,14 +1,14 @@
 ---
-title: SnapDoc Documentation
+title: RepoDocs Documentation
 description: Git to Docs in 30 Seconds - The most reliable bridge between Git and Docs
 order: 1
 ---
 
-# Welcome to SnapDoc
+# Welcome to RepoDocs
 
-SnapDoc transforms your GitHub repository's markdown files into beautiful, fast documentation sites instantly.
+RepoDocs transforms your GitHub repository's markdown files into beautiful, fast documentation sites instantly.
 
-## Why SnapDoc?
+## Why RepoDocs?
 
 - **30 Second Setup** - Connect GitHub, pick a repo, done
 - **Edge-Fast** - 10ms response times globally via Redis cache
@@ -34,6 +34,6 @@ SnapDoc transforms your GitHub repository's markdown files into beautiful, fast 
 
 ## Next Steps
 
-- [Getting Started](/docs/snapdocs/main/getting-started) - Create your first project
-- [Configuration](/docs/snapdocs/main/configuration) - Customize your docs
-- [Deployment](/docs/snapdocs/main/deployment) - Self-host or use cloud
+- [Getting Started](/docs/repodocs/main/getting-started) - Create your first project
+- [Configuration](/docs/repodocs/main/configuration) - Customize your docs
+- [Deployment](/docs/repodocs/main/deployment) - Self-host or use cloud

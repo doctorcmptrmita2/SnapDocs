@@ -6,7 +6,7 @@ order: 1
 
 # Markdown Guide
 
-SnapDoc supports GitHub Flavored Markdown (GFM) plus additional features.
+RepoDocs supports GitHub Flavored Markdown (GFM) plus additional features.
 
 ## Basic Syntax
 
@@ -44,7 +44,7 @@ SnapDoc supports GitHub Flavored Markdown (GFM) plus additional features.
 
 ## Code Blocks
 
-SnapDoc uses Shiki for syntax highlighting with 150+ languages.
+RepoDocs uses Shiki for syntax highlighting with 150+ languages.
 
 ### JavaScript
 
@@ -113,14 +113,6 @@ npm run build
 
 ### Unordered
 
-```markdown
-- Item 1
-- Item 2
-  - Nested item
-  - Another nested
-- Item 3
-```
-
 - Item 1
 - Item 2
   - Nested item
@@ -129,23 +121,11 @@ npm run build
 
 ### Ordered
 
-```markdown
-1. First item
-2. Second item
-3. Third item
-```
-
 1. First item
 2. Second item
 3. Third item
 
 ### Task Lists
-
-```markdown
-- [x] Completed task
-- [ ] Incomplete task
-- [ ] Another task
-```
 
 - [x] Completed task
 - [ ] Incomplete task
@@ -153,19 +133,10 @@ npm run build
 
 ## Blockquotes
 
-```markdown
-> This is a blockquote.
-> It can span multiple lines.
-```
-
 > This is a blockquote.
 > It can span multiple lines.
 
 ## Horizontal Rule
-
-```markdown
----
-```
 
 ---
 
