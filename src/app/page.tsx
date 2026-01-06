@@ -17,7 +17,7 @@ export default function HomePage() {
             <Link href="#pricing" className="text-slate-600 hover:text-slate-900 text-sm font-medium">
               Pricing
             </Link>
-            <Link href="/docs/RepoDocss/main" className="text-slate-600 hover:text-slate-900 text-sm font-medium">
+            <Link href="/docs/repodocs/main" className="text-slate-600 hover:text-slate-900 text-sm font-medium">
               Docs
             </Link>
           </nav>
@@ -70,7 +70,7 @@ export default function HomePage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/docs/RepoDocss/main"
+                  href="/docs/repodocs/main"
                   className="text-slate-600 hover:text-slate-900 font-medium flex items-center gap-2"
                 >
                   <FileText className="w-5 h-5" />
@@ -317,9 +317,9 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <Logo size="sm" />
             <div className="flex items-center gap-6 text-sm text-slate-500">
-              <Link href="/docs/RepoDocss/main" className="hover:text-slate-700">Docs</Link>
+              <Link href="/docs/repodocs/main" className="hover:text-slate-700">Docs</Link>
               <Link href="#pricing" className="hover:text-slate-700">Pricing</Link>
-              <a href="https://github.com/doctorcmptrmita2/RepoDocss" className="hover:text-slate-700">GitHub</a>
+              <a href="https://github.com/doctorcmptrmita2/RepoDocs" className="hover:text-slate-700">GitHub</a>
             </div>
             <p className="text-sm text-slate-400">
               © 2026 RepoDocs. Built for developers.
