@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --ring: #0ea5e9;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --ring: #38bdf8;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Shiki code blocks */
+.shiki {
+  @apply rounded-lg p-4 text-sm overflow-x-auto;
+}
+
+.shiki code {
+  @apply bg-transparent p-0;
+}
+
+/* Prose customization */
+.prose pre {
+  @apply bg-transparent p-0 m-0;
+}
+
+.prose pre .shiki {
+  @apply my-4;
+}
+
+/* Sidebar active state */
+.nav-link-active {
+  @apply bg-brand-50 text-brand-700 border-l-2 border-brand-500;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+}
