@@ -27,7 +27,7 @@ export default async function DocsLayout({ children, params }: LayoutProps) {
             {/* Mobile menu */}
             <MobileSidebar nav={nav} projectSlug={project} version={version} />
             
-            <Logo size="sm" href="/" />
+            <Logo size="sm" href={`/docs/${project}/${version}`} />
             
             <span className="text-slate-300 dark:text-slate-600 hidden sm:block">/</span>
             
