@@ -65,7 +65,10 @@ export async function POST(
     // Update project
     await db.project.update({
       where: { id: project.id },
-      data: { customDomain: cleanDomain },
+      data: { 
+        customDomain: cleanDomain,
+        domainVerified: false, // Reset verification on domain change
+      },
     });
 
     return NextResponse.json({ 
@@ -106,7 +109,10 @@ export async function DELETE(
     // Remove custom domain
     await db.project.update({
       where: { id: project.id },
-      data: { customDomain: null },
+      data: { 
+        customDomain: null,
+        domainVerified: false,
+      },
     });
 
     return NextResponse.json({ success: true });

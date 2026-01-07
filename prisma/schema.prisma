@@ -65,21 +65,22 @@ enum Plan {
 }
 
 model Project {
-  id            String   @id @default(cuid())
-  name          String
-  slug          String   @unique
-  repoFullName  String   // owner/repo format
-  branch        String   @default("main")
-  docsPath      String   @default("/docs")
-  customDomain  String?  @unique
-  isPrivate     Boolean  @default(false)
-  webhookId     Int?
-  webhookSecret String?
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  versions      Version[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  repoFullName    String   // owner/repo format
+  branch          String   @default("main")
+  docsPath        String   @default("/docs")
+  customDomain    String?  @unique
+  domainVerified  Boolean  @default(false)
+  isPrivate       Boolean  @default(false)
+  webhookId       Int?
+  webhookSecret   String?
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions        Version[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([userId])
   @@index([repoFullName])
