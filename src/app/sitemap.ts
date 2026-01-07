@@ -2,6 +2,9 @@ import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { getCachedNav } from '@/lib/cache';
 
+// Force dynamic rendering - don't generate at build time
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXTAUTH_URL || 'https://repodocs.dev';
   
