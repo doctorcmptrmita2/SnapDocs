@@ -11,18 +11,21 @@ interface SidebarProps {
   nav: NavItem[];
   projectSlug: string;
   version: string;
+  customDomain?: string;
 }
 
-export function Sidebar({ nav, projectSlug, version }: SidebarProps) {
+export function Sidebar({ nav, projectSlug, version, customDomain }: SidebarProps) {
   return (
     <aside className="w-56 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900">
       <nav className="sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto p-4">
-        {/* Version Selector */}
-        <div className="mb-4 pb-4 border-b border-slate-200 dark:border-slate-700">
-          <VersionSelector projectSlug={projectSlug} currentVersion={version} />
-        </div>
+        {/* Version Selector - hide on custom domain */}
+        {!customDomain && (
+          <div className="mb-4 pb-4 border-b border-slate-200 dark:border-slate-700">
+            <VersionSelector projectSlug={projectSlug} currentVersion={version} />
+          </div>
+        )}
         
-        <NavList items={nav} projectSlug={projectSlug} version={version} depth={0} />
+        <NavList items={nav} projectSlug={projectSlug} version={version} customDomain={customDomain} depth={0} />
       </nav>
     </aside>
   );
@@ -32,11 +35,13 @@ function NavList({
   items,
   projectSlug,
   version,
+  customDomain,
   depth,
 }: {
   items: NavItem[];
   projectSlug: string;
   version: string;
+  customDomain?: string;
   depth: number;
 }) {
   return (
@@ -47,6 +52,7 @@ function NavList({
           item={item}
           projectSlug={projectSlug}
           version={version}
+          customDomain={customDomain}
           depth={depth}
         />
       ))}
@@ -58,15 +64,17 @@ function NavItemComponent({
   item,
   projectSlug,
   version,
+  customDomain,
   depth,
 }: {
   item: NavItem;
   projectSlug: string;
   version: string;
+  customDomain?: string;
   depth: number;
 }) {
   const pathname = usePathname();
-  const href = `/docs/${projectSlug}/${version}/${item.path}`;
+  const href = customDomain ? `/${item.path}` : `/docs/${projectSlug}/${version}/${item.path}`;
   const isActive = pathname === href || pathname.startsWith(href + '/');
   const hasChildren = item.children && item.children.length > 0;
 
@@ -81,6 +89,7 @@ function NavItemComponent({
           items={item.children!}
           projectSlug={projectSlug}
           version={version}
+          customDomain={customDomain}
           depth={depth + 1}
         />
       </li>

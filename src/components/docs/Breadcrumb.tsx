@@ -8,15 +8,19 @@ interface BreadcrumbProps {
   version: string;
   docSlug: string;
   docTitle: string;
+  customDomain?: string;
 }
 
-export function Breadcrumb({ projectSlug, version, docSlug, docTitle }: BreadcrumbProps) {
+export function Breadcrumb({ projectSlug, version, docSlug, docTitle, customDomain }: BreadcrumbProps) {
   const parts = docSlug.split('/').filter(Boolean);
+  const baseHref = customDomain ? '' : `/docs/${projectSlug}/${version}`;
   
   // Build breadcrumb items
-  const items: Array<{ label: string; href?: string }> = [
-    { label: projectSlug, href: `/docs/${projectSlug}/${version}` },
-  ];
+  const items: Array<{ label: string; href?: string }> = [];
+  
+  if (!customDomain) {
+    items.push({ label: projectSlug, href: baseHref });
+  }
 
   // Add intermediate folders
   if (parts.length > 1) {
@@ -24,7 +28,7 @@ export function Breadcrumb({ projectSlug, version, docSlug, docTitle }: Breadcru
       const path = parts.slice(0, i + 1).join('/');
       items.push({
         label: formatLabel(parts[i]),
-        href: `/docs/${projectSlug}/${version}/${path}`,
+        href: `${baseHref}/${path}`,
       });
     }
   }
@@ -35,7 +39,7 @@ export function Breadcrumb({ projectSlug, version, docSlug, docTitle }: Breadcru
   return (
     <nav className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mb-4 flex-wrap">
       <Link 
-        href={`/docs/${projectSlug}/${version}`}
+        href={customDomain ? '/' : baseHref}
         className="hover:text-slate-700 dark:hover:text-slate-300 transition"
       >
         <Home className="w-4 h-4" />

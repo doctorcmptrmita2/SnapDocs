@@ -47,45 +47,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL(newPath, request.url));
   }
   
-  // Custom domain kontrolü
-  // Edge'de DB erişimi için internal API kullan
-  try {
-    const baseUrl = request.nextUrl.origin;
-    const lookupRes = await fetch(`${baseUrl}/api/domain-lookup?domain=${encodeURIComponent(host)}`, {
-      headers: {
-        'x-internal-request': 'true',
-      },
-    });
-    
-    if (lookupRes.ok) {
-      const data = await lookupRes.json();
-      
-      if (data.project) {
-        const { slug, branch } = data.project;
-        const newPath = pathname === '/' 
-          ? `/docs/${slug}/${branch}`
-          : `/docs/${slug}/${branch}${pathname}`;
-        
-        return NextResponse.rewrite(new URL(newPath, request.url));
-      }
-    }
-  } catch (error) {
-    console.error('Custom domain lookup error:', error);
-  }
-  
-  // Domain bulunamadı - 404 veya ana sayfaya yönlendir
-  return NextResponse.next();
+  // Custom domain - header ile işaretle, page'de handle et
+  const response = NextResponse.rewrite(new URL(`/custom-domain${pathname}`, request.url));
+  response.headers.set('x-custom-domain', host);
+  return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api/auth).*)',
   ],
 };

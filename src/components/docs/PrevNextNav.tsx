@@ -9,9 +9,10 @@ interface PrevNextNavProps {
   currentSlug: string;
   projectSlug: string;
   version: string;
+  customDomain?: string;
 }
 
-export function PrevNextNav({ nav, currentSlug, projectSlug, version }: PrevNextNavProps) {
+export function PrevNextNav({ nav, currentSlug, projectSlug, version, customDomain }: PrevNextNavProps) {
   // Flatten nav to get ordered list
   const flatNav = flattenNav(nav);
   const currentIndex = flatNav.findIndex(item => item.path === currentSlug);
@@ -21,11 +22,13 @@ export function PrevNextNav({ nav, currentSlug, projectSlug, version }: PrevNext
 
   if (!prev && !next) return null;
 
+  const getHref = (path: string) => customDomain ? `/${path}` : `/docs/${projectSlug}/${version}/${path}`;
+
   return (
     <nav className="flex items-center justify-between mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
       {prev ? (
         <Link
-          href={`/docs/${projectSlug}/${version}/${prev.path}`}
+          href={getHref(prev.path)}
           className="group flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition"
         >
           <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -40,7 +43,7 @@ export function PrevNextNav({ nav, currentSlug, projectSlug, version }: PrevNext
       
       {next ? (
         <Link
-          href={`/docs/${projectSlug}/${version}/${next.path}`}
+          href={getHref(next.path)}
           className="group flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition text-right"
         >
           <div>
