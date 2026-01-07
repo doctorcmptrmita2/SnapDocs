@@ -90,7 +90,7 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
               </div>
               <div className="p-4">
                 <label className="text-sm text-slate-500 mb-1.5 block">Documentation URL</label>
-                <p className="text-slate-900 dark:text-white font-mono text-sm">{baseUrl}/docs/{project.slug}</p>
+                <p className="text-slate-900 dark:text-white font-mono text-sm">{baseUrl}/docs/{project.slug}/{project.branch}</p>
               </div>
             </div>
           </section>
