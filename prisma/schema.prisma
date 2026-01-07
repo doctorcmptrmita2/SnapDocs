@@ -72,7 +72,6 @@ model Project {
   branch          String   @default("main")
   docsPath        String   @default("/docs")
   customDomain    String?  @unique
-  domainVerified  Boolean  @default(false)
   isPrivate       Boolean  @default(false)
   webhookId       Int?
   webhookSecret   String?

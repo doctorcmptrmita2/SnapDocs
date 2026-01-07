@@ -8,19 +8,18 @@ import { cn } from '@/lib/utils';
 interface CustomDomainFormProps {
   projectSlug: string;
   currentDomain: string | null;
-  isVerified: boolean;
 }
 
 type Status = 'idle' | 'saving' | 'verifying' | 'success' | 'error';
 type VerifyStatus = 'pending' | 'verified' | 'failed';
 
-export function CustomDomainForm({ projectSlug, currentDomain, isVerified }: CustomDomainFormProps) {
+export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFormProps) {
   const router = useRouter();
   const [domain, setDomain] = useState(currentDomain || '');
   const [status, setStatus] = useState<Status>('idle');
-  const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>(isVerified ? 'verified' : 'pending');
+  const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('pending');
   const [error, setError] = useState('');
-  const [showInstructions, setShowInstructions] = useState(!isVerified && !!currentDomain);
+  const [showInstructions, setShowInstructions] = useState(!!currentDomain);
 
   const mainDomain = process.env.NEXT_PUBLIC_DOMAIN || 'repodocs.dev';
 

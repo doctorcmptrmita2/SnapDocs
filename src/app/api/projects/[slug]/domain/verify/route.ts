@@ -86,14 +86,6 @@ export async function POST(
     // Verify DNS
     const result = await verifyDNS(project.customDomain);
 
-    // Update verification status in DB
-    if (result.verified) {
-      await db.project.update({
-        where: { id: project.id },
-        data: { domainVerified: true },
-      });
-    }
-
     return NextResponse.json({
       verified: result.verified,
       domain: project.customDomain,
