@@ -33,16 +33,17 @@
 - [x] Her versiyon için ayrı cache ✅
 
 ### 3. GitHub Webhook (Auto-Sync)
-- [ ] Webhook kurulumunu otomatikleştir
-- [ ] Push event'lerini işle
-- [ ] Sadece değişen dosyaları güncelle (incremental)
-- [ ] Webhook status dashboard'da göster
+- [x] Webhook handler (push events) ✅
+- [x] Webhook kurulum API ✅
+- [x] Webhook yönetim UI ✅
+- [x] Webhook status dashboard'da göster ✅
+- [ ] Sadece değişen dosyaları güncelle (incremental) - opsiyonel
 
 ### 4. Custom Domain
-- [ ] Domain ekleme UI
-- [ ] DNS doğrulama (TXT record)
-- [ ] SSL sertifikası (Let's Encrypt)
-- [ ] Wildcard subdomain routing
+- [x] Domain ekleme UI ✅
+- [x] DNS doğrulama (CNAME/A record) ✅
+- [x] Middleware custom domain routing ✅
+- [ ] SSL sertifikası (Let's Encrypt - hosting tarafında)
 
 ---
 
@@ -69,10 +70,13 @@
 - [ ] Hazır tema şablonları
 
 ### 8. SEO & Performance
-- [ ] Sitemap.xml otomatik oluşturma
-- [ ] robots.txt
-- [ ] OpenGraph images (auto-generate)
-- [ ] JSON-LD structured data
+- [x] Sitemap.xml otomatik oluşturma ✅
+- [x] robots.txt ✅
+- [x] OpenGraph meta tags ✅
+- [x] Twitter cards ✅
+- [x] Canonical URLs ✅
+- [ ] OpenGraph images (auto-generate) - opsiyonel
+- [ ] JSON-LD structured data - opsiyonel
 - [ ] Core Web Vitals optimizasyonu
 
 ---

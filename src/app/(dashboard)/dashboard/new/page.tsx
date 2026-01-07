@@ -120,7 +120,7 @@ export default function NewProjectPage() {
               URL Slug
             </label>
             <div className="flex items-center">
-              <span className="text-slate-500 text-sm mr-2">snapdoc.dev/</span>
+              <span className="text-slate-500 text-sm mr-2">repodocs.dev/</span>
               <input
                 type="text"
                 value={formData.slug}

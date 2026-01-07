@@ -9,6 +9,8 @@ import { UserMenu } from '@/components/dashboard/UserMenu';
 import { RefreshButton } from '@/components/dashboard/RefreshButton';
 import { SyncVersionsButton } from '@/components/dashboard/SyncVersionsButton';
 import { DeleteProjectButton } from '@/components/dashboard/DeleteProjectButton';
+import { CustomDomainForm } from '@/components/dashboard/CustomDomainForm';
+import { WebhookManager } from '@/components/dashboard/WebhookManager';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -93,6 +95,20 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
             </div>
           </section>
 
+          {/* Custom Domain */}
+          <section>
+            <h2 className="text-sm font-medium text-slate-900 dark:text-white mb-4">Custom Domain</h2>
+            <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+              <p className="text-sm text-slate-500 mb-4">
+                Use your own domain for documentation. Default: <code className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">{project.slug}.repodocs.dev</code>
+              </p>
+              <CustomDomainForm 
+                projectSlug={project.slug} 
+                currentDomain={project.customDomain} 
+              />
+            </div>
+          </section>
+
           {/* Repository */}
           <section>
             <h2 className="text-sm font-medium text-slate-900 dark:text-white mb-4">Repository</h2>
@@ -123,10 +139,19 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
           <section>
             <h2 className="text-sm font-medium text-slate-900 dark:text-white mb-4">Sync</h2>
             <div className="border border-slate-200 dark:border-slate-800 rounded-xl divide-y divide-slate-200 dark:divide-slate-800">
+              {/* Auto-sync (Webhook) */}
+              <div className="p-4">
+                <WebhookManager 
+                  projectSlug={project.slug} 
+                  webhookId={project.webhookId}
+                  lastSync={project.updatedAt}
+                />
+              </div>
+              {/* Manual Refresh */}
               <div className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-white">Refresh Cache</p>
+                    <p className="font-medium text-slate-900 dark:text-white">Manual Refresh</p>
                     <p className="text-sm text-slate-500 mt-0.5">Manually sync docs from GitHub</p>
                   </div>
                   <RefreshButton projectSlug={project.slug} />

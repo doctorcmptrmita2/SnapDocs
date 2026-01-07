@@ -94,18 +94,32 @@ export async function generateMetadata({ params }: PageProps) {
   const { project, version, slug } = await params;
   const docSlug = slug.join('/');
   const doc = await getCachedDoc(project, version, docSlug);
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://repodocs.dev';
 
   if (!doc) {
     return { title: 'Not Found' };
   }
 
+  const title = doc.title;
+  const description = doc.description || `Documentation page: ${doc.title}`;
+
   return {
-    title: doc.title,
-    description: doc.description,
+    title,
+    description,
     openGraph: {
-      title: doc.title,
-      description: doc.description,
+      title: `${title} | RepoDocs`,
+      description,
       type: 'article',
+      url: `${baseUrl}/docs/${project}/${version}/${docSlug}`,
+      siteName: 'RepoDocs',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | RepoDocs`,
+      description,
+    },
+    alternates: {
+      canonical: `${baseUrl}/docs/${project}/${version}/${docSlug}`,
     },
   };
 }

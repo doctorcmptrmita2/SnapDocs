@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Ana domain - değiştir
+// Ana domain
 const MAIN_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || 'repodocs.dev';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const pathname = request.nextUrl.pathname;
   
@@ -47,12 +47,34 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL(newPath, request.url));
   }
   
-  // Custom domain kontrolü - database lookup gerektirir
-  // Edge'de DB erişimi için ayrı bir API endpoint kullanılabilir
-  // Şimdilik header ile işaretle, page'de kontrol et
-  const response = NextResponse.next();
-  response.headers.set('x-custom-domain', host);
-  return response;
+  // Custom domain kontrolü
+  // Edge'de DB erişimi için internal API kullan
+  try {
+    const baseUrl = request.nextUrl.origin;
+    const lookupRes = await fetch(`${baseUrl}/api/domain-lookup?domain=${encodeURIComponent(host)}`, {
+      headers: {
+        'x-internal-request': 'true',
+      },
+    });
+    
+    if (lookupRes.ok) {
+      const data = await lookupRes.json();
+      
+      if (data.project) {
+        const { slug, branch } = data.project;
+        const newPath = pathname === '/' 
+          ? `/docs/${slug}/${branch}`
+          : `/docs/${slug}/${branch}${pathname}`;
+        
+        return NextResponse.rewrite(new URL(newPath, request.url));
+      }
+    }
+  } catch (error) {
+    console.error('Custom domain lookup error:', error);
+  }
+  
+  // Domain bulunamadı - 404 veya ana sayfaya yönlendir
+  return NextResponse.next();
 }
 
 export const config = {

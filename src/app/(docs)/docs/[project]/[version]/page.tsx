@@ -14,12 +14,53 @@ import { db } from '@/lib/db';
 import { Sidebar } from '@/components/docs/Sidebar';
 import { TableOfContents } from '@/components/docs/TableOfContents';
 import { ProseContent } from '@/components/docs/ProseContent';
+import type { Metadata } from 'next';
 
 interface PageProps {
   params: Promise<{
     project: string;
     version: string;
   }>;
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { project, version } = await params;
+  
+  const dbProject = await db.project.findUnique({
+    where: { slug: project },
+    select: { name: true, repoFullName: true },
+  });
+
+  if (!dbProject) {
+    return { title: 'Not Found' };
+  }
+
+  const indexDoc = await getCachedDoc(project, version, 'index');
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://repodocs.dev';
+  
+  const title = indexDoc?.title || dbProject.name;
+  const description = indexDoc?.description || `Documentation for ${dbProject.name}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | RepoDocs`,
+      description,
+      type: 'website',
+      url: `${baseUrl}/docs/${project}/${version}`,
+      siteName: 'RepoDocs',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | RepoDocs`,
+      description,
+    },
+    alternates: {
+      canonical: `${baseUrl}/docs/${project}/${version}`,
+    },
+  };
 }
 
 export default async function DocsIndexPage({ params }: PageProps) {
