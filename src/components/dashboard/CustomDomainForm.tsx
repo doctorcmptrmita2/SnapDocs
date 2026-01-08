@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Globe, Check, AlertCircle, Loader2, X, ExternalLink } from 'lucide-react';
+import { Globe, Check, AlertCircle, Loader2, X, ExternalLink, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CustomDomainFormProps {
@@ -13,6 +13,12 @@ interface CustomDomainFormProps {
 type Status = 'idle' | 'saving' | 'verifying' | 'success' | 'error';
 type VerifyStatus = 'pending' | 'verified' | 'failed';
 
+interface EasypanelStatus {
+  enabled: boolean;
+  success: boolean;
+  error?: string;
+}
+
 export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFormProps) {
   const router = useRouter();
   const [domain, setDomain] = useState(currentDomain || '');
@@ -20,6 +26,7 @@ export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFor
   const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('pending');
   const [error, setError] = useState('');
   const [showInstructions, setShowInstructions] = useState(!!currentDomain);
+  const [easypanelStatus, setEasypanelStatus] = useState<EasypanelStatus | null>(null);
 
   const mainDomain = process.env.NEXT_PUBLIC_DOMAIN || 'repodocs.dev';
 
@@ -58,6 +65,12 @@ export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFor
       setStatus('success');
       setVerifyStatus('pending');
       setShowInstructions(true);
+      
+      // Set Easypanel status if available
+      if (data.easypanel) {
+        setEasypanelStatus(data.easypanel);
+      }
+      
       setTimeout(() => setStatus('idle'), 2000);
       router.refresh();
     } catch (err) {
@@ -119,6 +132,7 @@ export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFor
       setDomain('');
       setVerifyStatus('pending');
       setShowInstructions(false);
+      setEasypanelStatus(null);
       setStatus('idle');
       router.refresh();
     } catch (err) {
@@ -210,6 +224,23 @@ export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFor
           <Check className="w-4 h-4" />
           {verifyStatus === 'verified' ? 'Domain verified!' : 'Domain saved!'}
         </p>
+      )}
+
+      {/* Easypanel Status */}
+      {easypanelStatus && easypanelStatus.enabled && (
+        <div className={cn(
+          'flex items-center gap-2 text-sm',
+          easypanelStatus.success ? 'text-green-600' : 'text-amber-600'
+        )}>
+          <Server className="w-4 h-4" />
+          {easypanelStatus.success ? (
+            <span>Domain added to Easypanel</span>
+          ) : (
+            <span>
+              Easypanel: {easypanelStatus.error || 'Manual setup required'}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Verification Status */}

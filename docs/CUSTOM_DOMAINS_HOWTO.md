@@ -99,12 +99,26 @@ Value: repodocs.dev
 
 ### C. Easypanel'de Domain Ekleme
 
-Her custom domain için Easypanel'de manuel domain eklenmeli:
+Her custom domain için Easypanel'de domain eklenmeli. İki yöntem var:
+
+#### Otomatik (Easypanel API ile)
+
+Environment variables ayarlandığında domain otomatik eklenir:
+
+```env
+EASYPANEL_URL=https://panel.yourdomain.com
+EASYPANEL_TOKEN=your-api-token
+EASYPANEL_PROJECT=repodocs
+EASYPANEL_SERVICE=app
+```
+
+API token almak için: Easypanel → Settings → API Tokens
+
+#### Manuel
+
 1. Easypanel → App → Domains
 2. "Add Domain" → `docs.example.com`
-3. SSL otomatik alınır
-
-**Otomasyon için:** Easypanel API kullanılabilir.
+3. SSL otomatik alınır (Let's Encrypt)
 
 ### D. Middleware Güncellemesi
 

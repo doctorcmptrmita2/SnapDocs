@@ -1,5 +1,5 @@
 # RepoDocs.dev - Proje Durum Raporu
-**Tarih:** 7 Ocak 2026
+**Tarih:** 8 Ocak 2026
 
 ---
 
@@ -11,8 +11,10 @@
 | Docs Viewer | ✅ Tamamlandı | 100% |
 | Versiyonlama | ✅ Tamamlandı | 100% |
 | Subdomain Routing | ✅ Tamamlandı | 100% |
-| Custom Domain | 🟡 Kısmi | 40% |
-| GitHub Webhook | 🔴 Beklemede | 20% |
+| Custom Domain | ✅ Tamamlandı | 100% |
+| GitHub Webhook | ✅ Tamamlandı | 100% |
+| SEO | ✅ Tamamlandı | 100% |
+| Easypanel Entegrasyonu | ✅ Tamamlandı | 100% |
 | Docs Linter | 🔴 Beklemede | 0% |
 
 ---
@@ -52,7 +54,7 @@
 - [x] Version dropdown selector
 - [x] Her versiyon için ayrı cache
 
-### 5. Subdomain Routing (100%) ✅
+### 5. Subdomain Routing (100%)
 - [x] Middleware implementasyonu (`src/middleware.ts`)
 - [x] `*.repodocs.dev` → `/docs/[slug]/[version]` rewrite
 - [x] Ana domain bypass (repodocs.dev, www.repodocs.dev)
@@ -60,28 +62,38 @@
 - [x] API ve static dosyalar bypass
 - [x] `NEXT_PUBLIC_DOMAIN` environment variable
 
----
-
-## 🟡 Kısmi Tamamlanan
-
-### Custom Domain (40%)
+### 6. Custom Domain (100%) ✅ YENİ
 - [x] Database şeması (`customDomain` field in Project)
 - [x] Middleware'de custom domain header set
-- [ ] Settings sayfasında domain input UI
-- [ ] Domain kaydetme API
-- [ ] DNS doğrulama endpoint
-- [ ] Easypanel API entegrasyonu
+- [x] Settings sayfasında domain input UI (`CustomDomainForm.tsx`)
+- [x] Domain kaydetme/silme API (`/api/projects/[slug]/domain`)
+- [x] DNS doğrulama endpoint (`/api/projects/[slug]/domain/verify`)
+- [x] Custom domain routing (`/custom-domain/[[...slug]]/page.tsx`)
+- [x] Domain lookup API (`/api/domain-lookup`)
+
+### 7. GitHub Webhook Auto-sync (100%) ✅ YENİ
+- [x] Webhook kurulum API (`/api/projects/[slug]/webhook`)
+- [x] Webhook silme API
+- [x] Webhook status API
+- [x] WebhookManager UI component
+- [x] Settings sayfasına Auto-sync section
+
+### 8. SEO (100%) ✅ YENİ
+- [x] `robots.ts` - robots.txt
+- [x] `sitemap.ts` - sitemap.xml (dynamic)
+- [x] OpenGraph metadata (docs sayfaları)
+- [x] Twitter Card metadata
+
+### 9. Easypanel Entegrasyonu (100%) ✅ YENİ
+- [x] Easypanel API client (`src/lib/easypanel/client.ts`)
+- [x] Domain ekleme otomasyonu
+- [x] Domain silme otomasyonu
+- [x] Environment variables desteği
+- [x] UI'da Easypanel status gösterimi
 
 ---
 
-## 🔴 Bekleyen Özellikler
-
-### GitHub Webhook (20%)
-- [x] Webhook secret field (DB'de var)
-- [ ] Webhook kurulum otomasyonu
-- [ ] Push event işleme
-- [ ] Incremental update
-- [ ] Webhook status gösterimi
+## � KBekleyen Özellikler
 
 ### Docs Linter (0%)
 - [ ] Kırık link tespiti
@@ -92,8 +104,9 @@
 ### Diğer
 - [ ] Analytics
 - [ ] Tema & Branding
-- [ ] SEO (sitemap, robots.txt)
 - [ ] Stripe entegrasyonu
+- [ ] Team features
+- [ ] AI Search
 
 ---
 
@@ -167,25 +180,24 @@ RepoDocs/
 ## 🎯 Sonraki Adımlar (Öneri)
 
 ### Kısa Vadeli (1-2 Hafta)
-1. Custom Domain UI ve API tamamlama
-2. GitHub Webhook auto-sync
-3. SEO (sitemap.xml, robots.txt)
-
-### Orta Vadeli (3-4 Hafta)
 1. Docs Linter
 2. Analytics
-3. Tema özelleştirme
+
+### Orta Vadeli (3-4 Hafta)
+1. Tema özelleştirme
+2. Stripe entegrasyonu
 
 ### Uzun Vadeli
-1. Stripe entegrasyonu
-2. Team features
-3. AI Search
+1. Team features
+2. AI Search
 
 ---
 
 ## 📝 Notlar
 
 - Subdomain özelliği production-ready durumda
+- Custom domain özelliği çalışıyor (docs.agentwall.io test edildi)
 - DNS ayarları için `docs/CUSTOM_DOMAINS_HOWTO.md` rehberi mevcut
 - Cloudflare wildcard DNS + Proxy öneriliyor
 - Environment variable: `NEXT_PUBLIC_DOMAIN` ile ana domain ayarlanıyor
+- Easypanel entegrasyonu opsiyonel - environment variables ile aktif edilir
