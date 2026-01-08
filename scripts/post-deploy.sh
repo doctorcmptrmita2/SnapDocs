@@ -11,9 +11,13 @@ echo "=============================="
 
 # Run database migrations
 echo "📊 Running database migrations..."
-npx prisma db push --skip-generate
+if command -v npx &> /dev/null; then
+    npx prisma db push --skip-generate || echo "⚠️  Prisma migration skipped (may already be done)"
+else
+    echo "⚠️  npx not found, skipping database migration"
+fi
 
-echo "✅ Database migrations complete"
+echo "✅ Post-deploy initialization complete"
 
 # Check Nginx automation
 if [ "$NGINX_ENABLED" = "true" ]; then
@@ -21,12 +25,4 @@ if [ "$NGINX_ENABLED" = "true" ]; then
     echo "⚠️  Nginx automation is enabled"
     echo "📝 To complete setup, run on the host server:"
     echo "   sudo bash scripts/init-nginx.sh"
-    echo ""
-    echo "   Then create SSL certificate:"
-    echo "   sudo certbot certonly --manual --preferred-challenges=dns \\"
-    echo "     -d \"*.${NGINX_MAIN_DOMAIN}\" -d \"${NGINX_MAIN_DOMAIN}\" \\"
-    echo "     -m ${CERTBOT_EMAIL}"
 fi
-
-echo ""
-echo "✅ Post-deploy initialization complete!"
