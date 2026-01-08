@@ -89,7 +89,6 @@ export async function POST(
     return NextResponse.json({
       verified: result.verified,
       domain: project.customDomain,
-      error: result.error,
     });
   } catch (error) {
     console.error('Domain verification error:', error);
