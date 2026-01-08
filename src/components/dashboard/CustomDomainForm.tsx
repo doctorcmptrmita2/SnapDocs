@@ -310,6 +310,24 @@ export function CustomDomainForm({ projectSlug, currentDomain, isVerified = fals
               DNS changes can take up to 48 hours to propagate.
             </p>
           </div>
+          
+          {/* Easypanel Manual Setup Instructions */}
+          {easypanelStatus && !easypanelStatus.success && (
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-sm font-medium text-slate-900 dark:text-white mb-2">
+                <Server className="w-4 h-4 inline mr-1" />
+                Easypanel Setup Required
+              </p>
+              <ol className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-decimal list-inside">
+                <li>Go to Easypanel Dashboard</li>
+                <li>Navigate to: repodocs → app → Domains</li>
+                <li>Click "Add Domain"</li>
+                <li>Enter: <code className="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 rounded">{currentDomain}</code></li>
+                <li>Enable HTTPS (Let's Encrypt)</li>
+                <li>Click "Add"</li>
+              </ol>
+            </div>
+          )}
         </div>
       )}
     </div>

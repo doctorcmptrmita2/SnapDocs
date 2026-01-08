@@ -33,11 +33,13 @@ export async function GET() {
       enabled: true,
       connected: result.success,
       error: result.error,
+      message: result.message,
       config: {
         url: process.env.EASYPANEL_URL,
         project: process.env.EASYPANEL_PROJECT || 'repodocs',
         service: process.env.EASYPANEL_SERVICE || 'app',
       },
+      note: 'Easypanel does not have a public API for domain management. Domains must be added manually in Easypanel dashboard.',
     });
   } catch (error) {
     console.error('Easypanel test error:', error);

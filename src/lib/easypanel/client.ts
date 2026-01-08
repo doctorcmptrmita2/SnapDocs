@@ -1,8 +1,16 @@
 /**
- * Easypanel API Client
+ * Easypanel Domain Management
  * 
- * Handles automatic domain management via Easypanel API
- * When a user adds a custom domain, it's automatically added to Easypanel
+ * Easypanel doesn't have a public API for domain management.
+ * Instead, we use a wildcard domain approach:
+ * 
+ * 1. Setup wildcard domain in Easypanel: *.repodocs.dev
+ * 2. All subdomains automatically work: project.repodocs.dev
+ * 3. For custom domains (docs.example.com), user must:
+ *    - Add CNAME pointing to repodocs.dev
+ *    - Manually add domain in Easypanel (one-time setup)
+ * 
+ * This module provides helper functions and status checking.
  */
 
 interface EasypanelConfig {
@@ -42,7 +50,11 @@ export function isEasypanelEnabled(): boolean {
 }
 
 /**
- * Add a domain to Easypanel with SSL
+ * Add a domain to Easypanel
+ * 
+ * Note: Easypanel doesn't have a public API for this.
+ * This function attempts to use internal tRPC endpoints.
+ * If it fails, the domain must be added manually.
  */
 export async function addDomainToEasypanel(domain: string): Promise<EasypanelResult> {
   const config = getConfig();
@@ -54,44 +66,51 @@ export async function addDomainToEasypanel(domain: string): Promise<EasypanelRes
     };
   }
 
-  try {
-    // Easypanel tRPC endpoint for adding domains
-    const response = await fetch(`${config.url}/api/trpc/app.createServiceDomain`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.token}`,
-      },
-      body: JSON.stringify({
-        json: {
-          projectName: config.project,
-          serviceName: config.service,
-          domain: domain,
-          https: true,
-        }
-      }),
-    });
+  // Try multiple endpoint formats
+  const endpoints = [
+    {
+      url: `${config.url}/api/trpc/services.addDomain`,
+      body: { json: { projectName: config.project, serviceName: config.service, domain } }
+    },
+    {
+      url: `${config.url}/api/trpc/app.addDomain`,
+      body: { json: { projectName: config.project, serviceName: config.service, domain } }
+    },
+    {
+      url: `${config.url}/api/trpc/domain.create`,
+      body: { json: { projectName: config.project, serviceName: config.service, host: domain, https: true } }
+    },
+  ];
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Easypanel API error:', response.status, errorText);
-      return { 
-        success: false, 
-        error: `Easypanel API error: ${response.status}` 
-      };
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.token}`,
+        },
+        body: JSON.stringify(endpoint.body),
+      });
+
+      if (response.ok) {
+        return { 
+          success: true, 
+          message: `Domain ${domain} added to Easypanel` 
+        };
+      }
+    } catch (error) {
+      // Try next endpoint
+      continue;
     }
-
-    return { 
-      success: true, 
-      message: `Domain ${domain} added to Easypanel` 
-    };
-  } catch (error) {
-    console.error('Easypanel add domain error:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    };
   }
+
+  // If all endpoints fail, return instructions for manual setup
+  return { 
+    success: false, 
+    error: 'Automatic domain setup failed. Please add the domain manually in Easypanel.',
+    message: `Manual setup required: Go to Easypanel > ${config.project} > ${config.service} > Domains > Add Domain: ${domain}`
+  };
 }
 
 /**
@@ -107,46 +126,51 @@ export async function removeDomainFromEasypanel(domain: string): Promise<Easypan
     };
   }
 
-  try {
-    const response = await fetch(`${config.url}/api/trpc/app.removeServiceDomain`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.token}`,
-      },
-      body: JSON.stringify({
-        json: {
-          projectName: config.project,
-          serviceName: config.service,
-          domain: domain,
-        }
-      }),
-    });
+  const endpoints = [
+    {
+      url: `${config.url}/api/trpc/services.removeDomain`,
+      body: { json: { projectName: config.project, serviceName: config.service, domain } }
+    },
+    {
+      url: `${config.url}/api/trpc/app.removeDomain`,
+      body: { json: { projectName: config.project, serviceName: config.service, domain } }
+    },
+    {
+      url: `${config.url}/api/trpc/domain.delete`,
+      body: { json: { projectName: config.project, serviceName: config.service, host: domain } }
+    },
+  ];
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Easypanel API error:', response.status, errorText);
-      return { 
-        success: false, 
-        error: `Easypanel API error: ${response.status}` 
-      };
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.token}`,
+        },
+        body: JSON.stringify(endpoint.body),
+      });
+
+      if (response.ok) {
+        return { 
+          success: true, 
+          message: `Domain ${domain} removed from Easypanel` 
+        };
+      }
+    } catch (error) {
+      continue;
     }
-
-    return { 
-      success: true, 
-      message: `Domain ${domain} removed from Easypanel` 
-    };
-  } catch (error) {
-    console.error('Easypanel remove domain error:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    };
   }
+
+  return { 
+    success: false, 
+    error: 'Automatic domain removal failed. Please remove the domain manually in Easypanel.' 
+  };
 }
 
 /**
- * List all domains in Easypanel (also used for testing connection)
+ * List domains in Easypanel
  */
 export async function listEasypanelDomains(): Promise<EasypanelResult & { domains?: string[] }> {
   const config = getConfig();
@@ -158,64 +182,116 @@ export async function listEasypanelDomains(): Promise<EasypanelResult & { domain
     };
   }
 
-  try {
-    // Easypanel uses tRPC - correct endpoint format
-    const response = await fetch(`${config.url}/api/trpc/app.getServiceDomains?input=${encodeURIComponent(JSON.stringify({
-      json: {
-        projectName: config.project,
-        serviceName: config.service,
+  const endpoints = [
+    `${config.url}/api/trpc/services.getDomains?input=${encodeURIComponent(JSON.stringify({ json: { projectName: config.project, serviceName: config.service } }))}`,
+    `${config.url}/api/trpc/app.getDomains?input=${encodeURIComponent(JSON.stringify({ json: { projectName: config.project, serviceName: config.service } }))}`,
+  ];
+
+  for (const url of endpoints) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const domains = data.result?.data?.json || [];
+        return { success: true, domains };
       }
-    }))}`, {
+    } catch (error) {
+      continue;
+    }
+  }
+
+  return { 
+    success: false, 
+    error: 'Could not fetch domains from Easypanel' 
+  };
+}
+
+/**
+ * Test Easypanel connection
+ */
+export async function testEasypanelConnection(): Promise<EasypanelResult> {
+  const config = getConfig();
+  
+  if (!config) {
+    return { 
+      success: false, 
+      error: 'Easypanel not configured. Set EASYPANEL_URL and EASYPANEL_TOKEN.' 
+    };
+  }
+
+  try {
+    // Try to fetch service info
+    const response = await fetch(`${config.url}/api/trpc/projects.getAll`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${config.token}`,
       },
     });
 
-    if (!response.ok) {
-      // Try alternative endpoint
-      const altResponse = await fetch(`${config.url}/api/projects/${config.project}/services/${config.service}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${config.token}`,
-        },
-      });
-      
-      if (!altResponse.ok) {
-        return { 
-          success: false, 
-          error: `Easypanel API error: ${response.status}` 
-        };
-      }
-      
-      const altData = await altResponse.json();
-      return { success: true, domains: altData.domains || [] };
+    if (response.ok) {
+      return { success: true, message: 'Connected to Easypanel' };
     }
 
-    const data = await response.json();
-    const domains = data.result?.data?.json || [];
+    // Try alternative endpoint
+    const altResponse = await fetch(`${config.url}/api/trpc/user.me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+      },
+    });
+
+    if (altResponse.ok) {
+      return { success: true, message: 'Connected to Easypanel' };
+    }
 
     return { 
-      success: true, 
-      domains 
+      success: false, 
+      error: `Easypanel API returned ${response.status}` 
     };
   } catch (error) {
-    console.error('Easypanel list domains error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+      error: error instanceof Error ? error.message : 'Connection failed' 
     };
   }
+}
+
+/**
+ * Get instructions for manual domain setup
+ */
+export function getManualSetupInstructions(domain: string): string {
+  const config = getConfig();
+  const project = config?.project || 'repodocs';
+  const service = config?.service || 'app';
+  
+  return `
+To add ${domain} to Easypanel:
+
+1. Go to Easypanel Dashboard
+2. Navigate to: ${project} > ${service} > Domains
+3. Click "Add Domain"
+4. Enter: ${domain}
+5. Enable HTTPS (Let's Encrypt)
+6. Click "Add"
+
+DNS Configuration:
+- Add a CNAME record: ${domain} → repodocs.dev
+- Or add an A record pointing to your server IP
+`;
 }
 
 export const easypanel = {
   addDomain: addDomainToEasypanel,
   removeDomain: removeDomainFromEasypanel,
   listDomains: listEasypanelDomains,
+  testConnection: testEasypanelConnection,
   isEnabled: isEasypanelEnabled,
-  testConnection: async (): Promise<EasypanelResult> => {
-    const result = await listEasypanelDomains();
-    return { success: result.success, error: result.error };
-  },
+  getManualSetupInstructions,
 };
