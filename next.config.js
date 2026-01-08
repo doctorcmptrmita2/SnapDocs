@@ -8,6 +8,18 @@ const nextConfig = {
     ],
   },
   serverExternalPackages: ['shiki'],
+  experimental: {
+    // Fix for server actions in standalone build
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  // Suppress fetch warnings in Edge Runtime
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
 };
 
 module.exports = nextConfig;

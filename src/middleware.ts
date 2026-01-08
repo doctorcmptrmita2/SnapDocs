@@ -48,6 +48,7 @@ export async function middleware(request: NextRequest) {
   }
   
   // Custom domain - header ile işaretle, page'de handle et
+  // Edge Runtime'da DB sorgusu yapma, sadece header ekle
   const response = NextResponse.rewrite(new URL(`/custom-domain${pathname}`, request.url));
   response.headers.set('x-custom-domain', host);
   return response;
