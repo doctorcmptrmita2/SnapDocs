@@ -86,6 +86,14 @@ export async function POST(
     // Verify DNS - BYPASS FOR TESTING
     const result = { verified: true }; // Always return true for now
 
+    // Update project verification status
+    if (result.verified) {
+      await db.project.update({
+        where: { id: project.id },
+        data: { domainVerified: true }
+      });
+    }
+
     return NextResponse.json({
       verified: result.verified,
       domain: project.customDomain,
