@@ -66,6 +66,11 @@ export default async function CustomDomainPage({ params }: PageProps) {
     if (defaultDoc) {
       redirect(`/${defaultDoc}`);
     }
+    // If no default doc found, try README
+    const readmeDoc = await getCachedDoc(project.slug, version, 'README');
+    if (readmeDoc) {
+      redirect('/README');
+    }
   }
 
   if (!doc) {
