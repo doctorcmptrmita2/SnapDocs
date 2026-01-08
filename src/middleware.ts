@@ -9,7 +9,12 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // localhost için atla
-  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+  if (host.includes('localhost') || host.includes('127.0.0.1') || host.includes('0.0.0.0')) {
+    return NextResponse.next();
+  }
+  
+  // Easypanel internal domain için atla
+  if (host.includes('easypanel.host')) {
     return NextResponse.next();
   }
   
@@ -48,7 +53,6 @@ export async function middleware(request: NextRequest) {
   }
   
   // Custom domain - header ile işaretle, page'de handle et
-  // Edge Runtime'da DB sorgusu yapma, sadece header ekle
   const response = NextResponse.rewrite(new URL(`/custom-domain${pathname}`, request.url));
   response.headers.set('x-custom-domain', host);
   return response;
@@ -58,6 +62,4 @@ export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api/auth).*)',
   ],
-  // Disable Edge Runtime to avoid fetch issues
-  runtime: 'nodejs',
 };
