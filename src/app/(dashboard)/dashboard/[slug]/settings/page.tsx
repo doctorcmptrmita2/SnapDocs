@@ -105,6 +105,7 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
               <CustomDomainForm 
                 projectSlug={project.slug} 
                 currentDomain={project.customDomain}
+                isVerified={!!project.customDomain} // Geçici olarak domain varsa verified say
               />
             </div>
           </section>

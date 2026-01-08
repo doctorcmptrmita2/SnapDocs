@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 interface CustomDomainFormProps {
   projectSlug: string;
   currentDomain: string | null;
+  isVerified?: boolean;
 }
 
 type Status = 'idle' | 'saving' | 'verifying' | 'success' | 'error';
@@ -19,11 +20,11 @@ interface EasypanelStatus {
   error?: string;
 }
 
-export function CustomDomainForm({ projectSlug, currentDomain }: CustomDomainFormProps) {
+export function CustomDomainForm({ projectSlug, currentDomain, isVerified = false }: CustomDomainFormProps) {
   const router = useRouter();
   const [domain, setDomain] = useState(currentDomain || '');
   const [status, setStatus] = useState<Status>('idle');
-  const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('pending');
+  const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>(isVerified ? 'verified' : 'pending');
   const [error, setError] = useState('');
   const [showInstructions, setShowInstructions] = useState(!!currentDomain);
   const [easypanelStatus, setEasypanelStatus] = useState<EasypanelStatus | null>(null);
