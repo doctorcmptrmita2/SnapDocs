@@ -204,4 +204,8 @@ export const easypanel = {
   removeDomain: removeDomainFromEasypanel,
   listDomains: listEasypanelDomains,
   isEnabled: isEasypanelEnabled,
+  testConnection: async (): Promise<EasypanelResult> => {
+    const result = await listEasypanelDomains();
+    return { success: result.success, error: result.error };
+  },
 };
