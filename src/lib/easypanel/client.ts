@@ -55,8 +55,8 @@ export async function addDomainToEasypanel(domain: string): Promise<EasypanelRes
   }
 
   try {
-    // Easypanel API endpoint for adding domains
-    const response = await fetch(`${config.url}/api/trpc/domain.create`, {
+    // Easypanel tRPC endpoint for adding domains
+    const response = await fetch(`${config.url}/api/trpc/app.createServiceDomain`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,24 +66,21 @@ export async function addDomainToEasypanel(domain: string): Promise<EasypanelRes
         json: {
           projectName: config.project,
           serviceName: config.service,
-          host: domain,
+          domain: domain,
           https: true,
-          certificateType: 'letsencrypt',
         }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Easypanel API error:', errorText);
+      console.error('Easypanel API error:', response.status, errorText);
       return { 
         success: false, 
         error: `Easypanel API error: ${response.status}` 
       };
     }
 
-    const data = await response.json();
-    
     return { 
       success: true, 
       message: `Domain ${domain} added to Easypanel` 
@@ -111,7 +108,7 @@ export async function removeDomainFromEasypanel(domain: string): Promise<Easypan
   }
 
   try {
-    const response = await fetch(`${config.url}/api/trpc/domain.delete`, {
+    const response = await fetch(`${config.url}/api/trpc/app.removeServiceDomain`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -121,14 +118,14 @@ export async function removeDomainFromEasypanel(domain: string): Promise<Easypan
         json: {
           projectName: config.project,
           serviceName: config.service,
-          host: domain,
+          domain: domain,
         }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Easypanel API error:', errorText);
+      console.error('Easypanel API error:', response.status, errorText);
       return { 
         success: false, 
         error: `Easypanel API error: ${response.status}` 
@@ -149,7 +146,7 @@ export async function removeDomainFromEasypanel(domain: string): Promise<Easypan
 }
 
 /**
- * List all domains in Easypanel
+ * List all domains in Easypanel (also used for testing connection)
  */
 export async function listEasypanelDomains(): Promise<EasypanelResult & { domains?: string[] }> {
   const config = getConfig();
@@ -162,29 +159,42 @@ export async function listEasypanelDomains(): Promise<EasypanelResult & { domain
   }
 
   try {
-    const response = await fetch(`${config.url}/api/trpc/service.get`, {
-      method: 'POST',
+    // Easypanel uses tRPC - correct endpoint format
+    const response = await fetch(`${config.url}/api/trpc/app.getServiceDomains?input=${encodeURIComponent(JSON.stringify({
+      json: {
+        projectName: config.project,
+        serviceName: config.service,
+      }
+    }))}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${config.token}`,
       },
-      body: JSON.stringify({
-        json: {
-          projectName: config.project,
-          serviceName: config.service,
-        }
-      }),
     });
 
     if (!response.ok) {
-      return { 
-        success: false, 
-        error: `Easypanel API error: ${response.status}` 
-      };
+      // Try alternative endpoint
+      const altResponse = await fetch(`${config.url}/api/projects/${config.project}/services/${config.service}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${config.token}`,
+        },
+      });
+      
+      if (!altResponse.ok) {
+        return { 
+          success: false, 
+          error: `Easypanel API error: ${response.status}` 
+        };
+      }
+      
+      const altData = await altResponse.json();
+      return { success: true, domains: altData.domains || [] };
     }
 
     const data = await response.json();
-    const domains = data.result?.data?.json?.domains?.map((d: any) => d.host) || [];
+    const domains = data.result?.data?.json || [];
 
     return { 
       success: true, 
