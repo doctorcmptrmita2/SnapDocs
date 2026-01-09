@@ -181,7 +181,7 @@ export async function findDomainByHost(host: string): Promise<DokployResult & { 
     return { success: false, error: result.error };
   }
 
-  const domain = result.domains.find((d: { host?: string }) => d.host === host) as { domainId?: string } | undefined;
+  const domain = (result.domains as Array<{ host?: string; domainId?: string }>).find((d) => d.host === host);
   
   if (domain?.domainId) {
     return { success: true, domainId: domain.domainId };
