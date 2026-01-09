@@ -11,6 +11,8 @@ import { SyncVersionsButton } from '@/components/dashboard/SyncVersionsButton';
 import { DeleteProjectButton } from '@/components/dashboard/DeleteProjectButton';
 import { CustomDomainForm } from '@/components/dashboard/CustomDomainForm';
 import { WebhookManager } from '@/components/dashboard/WebhookManager';
+import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
+import { LintCard } from '@/components/dashboard/LintCard';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -133,6 +135,15 @@ export default async function ProjectSettingsPage({ params }: PageProps) {
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
+            </div>
+          </section>
+
+          {/* Analytics & Linter */}
+          <section>
+            <h2 className="text-sm font-medium text-slate-900 dark:text-white mb-4">Insights</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AnalyticsCard projectSlug={project.slug} />
+              <LintCard projectSlug={project.slug} />
             </div>
           </section>
 

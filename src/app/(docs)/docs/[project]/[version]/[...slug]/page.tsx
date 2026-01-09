@@ -14,6 +14,7 @@ import { TableOfContents } from '@/components/docs/TableOfContents';
 import { ProseContent } from '@/components/docs/ProseContent';
 import { Breadcrumb } from '@/components/docs/Breadcrumb';
 import { PrevNextNav } from '@/components/docs/PrevNextNav';
+import { AnalyticsTracker } from '@/components/docs/AnalyticsTracker';
 import { getCachedDoc, getCachedNav } from '@/lib/cache';
 
 interface PageProps {
@@ -45,6 +46,9 @@ export default async function DocPage({ params }: PageProps) {
 
   return (
     <div className="flex">
+      {/* Analytics Tracker */}
+      <AnalyticsTracker projectSlug={project} path={docSlug} version={version} />
+
       {/* Sidebar - hidden on mobile */}
       <div className="hidden lg:block">
         <Sidebar nav={nav} projectSlug={project} version={version} />
