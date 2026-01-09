@@ -17,6 +17,7 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { easypanel, isEasypanelEnabled } from '@/lib/easypanel/client';
 import { nginx, isNginxEnabled } from '@/lib/nginx/client';
+import { dokploy, isDokployEnabled } from '@/lib/dokploy/client';
 
 export async function POST(
   request: NextRequest,
@@ -93,8 +94,15 @@ export async function POST(
       nginxResult = await nginx.addDomain(cleanDomain);
       if (!nginxResult.success) {
         console.warn('Failed to add domain to Nginx:', nginxResult.error);
-        // Don't fail the request, just log the warning
-        // Domain is saved in DB, user can manually configure Nginx
+      }
+    }
+
+    // Add domain to Dokploy if configured (preferred method)
+    let dokployResult: { success: boolean; error?: string; message?: string } = { success: true };
+    if (isDokployEnabled()) {
+      dokployResult = await dokploy.addDomain(cleanDomain);
+      if (!dokployResult.success) {
+        console.warn('Failed to add domain to Dokploy:', dokployResult.error);
       }
     }
 
@@ -111,6 +119,12 @@ export async function POST(
         success: nginxResult.success,
         error: nginxResult.error,
         message: nginxResult.message,
+      },
+      dokploy: {
+        enabled: isDokployEnabled(),
+        success: dokployResult.success,
+        error: dokployResult.error,
+        message: dokployResult.message,
       }
     });
   } catch (error) {
@@ -171,6 +185,15 @@ export async function DELETE(
       }
     }
 
+    // Remove domain from Dokploy if configured
+    let dokployResult: { success: boolean; error?: string; message?: string } = { success: true };
+    if (isDokployEnabled() && currentDomain) {
+      dokployResult = await dokploy.removeDomainByHost(currentDomain);
+      if (!dokployResult.success) {
+        console.warn('Failed to remove domain from Dokploy:', dokployResult.error);
+      }
+    }
+
     return NextResponse.json({ 
       success: true,
       easypanel: {
@@ -183,6 +206,12 @@ export async function DELETE(
         success: nginxResult.success,
         error: nginxResult.error,
         message: nginxResult.message,
+      },
+      dokploy: {
+        enabled: isDokployEnabled(),
+        success: dokployResult.success,
+        error: dokployResult.error,
+        message: dokployResult.message,
       }
     });
   } catch (error) {

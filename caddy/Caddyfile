@@ -1,0 +1,39 @@
+# Caddy Configuration for RepoDocs
+# Handles automatic SSL for all custom domains
+
+{
+    # Global options
+    email admin@repodocs.dev
+    
+    # On-demand TLS - automatically get SSL for any domain
+    on_demand_tls {
+        # Verify domain is valid before getting certificate
+        ask http://localhost:3000/api/domain/verify-caddy
+        
+        # Rate limiting
+        interval 1m
+        burst 5
+    }
+}
+
+# Catch-all for custom domains
+:443 {
+    # Enable on-demand TLS
+    tls {
+        on_demand
+    }
+    
+    # Proxy to Next.js app
+    reverse_proxy localhost:3000 {
+        # Pass original host header
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# HTTP redirect to HTTPS
+:80 {
+    redir https://{host}{uri} permanent
+}

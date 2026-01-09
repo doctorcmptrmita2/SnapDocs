@@ -1,0 +1,29 @@
+# Caddy Reverse Proxy for RepoDocs
+# Handles automatic SSL for custom domains
+
+version: '3.8'
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: repodocs-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - ACME_AGREE=true
+    networks:
+      - repodocs-network
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  repodocs-network:
+    external: true
