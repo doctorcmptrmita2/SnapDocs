@@ -104,3 +104,30 @@ enum VersionType {
   BRANCH
   TAG
 }
+
+// Analytics Models
+model PageView {
+  id        String   @id @default(cuid())
+  projectId String
+  path      String
+  version   String?
+  referrer  String?
+  userAgent String?
+  country   String?
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([projectId, createdAt])
+  @@index([projectId, path])
+}
+
+model DailyStats {
+  id        String   @id @default(cuid())
+  projectId String
+  date      DateTime @db.Date
+  views     Int      @default(0)
+  visitors  Int      @default(0)
+  
+  @@unique([projectId, date])
+  @@index([projectId])
+}
