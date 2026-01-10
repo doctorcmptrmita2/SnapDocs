@@ -14,16 +14,14 @@ import Redis from 'ioredis';
 import type { ParsedDoc, NavItem, CachedProject, VersionsCache } from '@/types';
 import { getProjectCacheKey, getDocCacheKey, getNavCacheKey, getVersionsCacheKey } from '@/lib/utils';
 
-// Singleton Redis client
-let redis: Redis | null = null;
+// Use globalThis to persist Redis client across hot reloads and workers
+const globalForRedis = globalThis as unknown as { redis: Redis | undefined };
 
 function getRedis(): Redis {
-  if (!redis) {
+  if (!globalForRedis.redis) {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     
-    // Parse Redis URL - handle both formats:
-    // redis://password@host:port
-    // redis://username:password@host:port
+    // Parse Redis URL
     let host = 'localhost';
     let port = 6379;
     let password: string | undefined;
@@ -32,45 +30,40 @@ function getRedis(): Redis {
       const url = new URL(redisUrl);
       host = url.hostname;
       port = parseInt(url.port) || 6379;
-      // Password can be in url.password or if username is 'default', use password
       password = url.password || undefined;
     } catch {
       console.error('Failed to parse REDIS_URL, using defaults');
     }
     
-    console.log(`Connecting to Redis at ${host}:${port} with password: ${password ? 'yes' : 'no'}`);
+    console.log(`Connecting to Redis at ${host}:${port}`);
     
-    redis = new Redis({
+    globalForRedis.redis = new Redis({
       host,
       port,
       password,
       maxRetriesPerRequest: 5,
       retryStrategy: (times) => {
-        // Exponential backoff with max 3 seconds
         const delay = Math.min(times * 200, 3000);
-        console.log(`Redis retry attempt ${times}, waiting ${delay}ms`);
         return delay;
       },
       reconnectOnError: (err) => {
         const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
-        if (targetErrors.some(e => err.message.includes(e))) {
-          return true;
-        }
-        return false;
+        return targetErrors.some(e => err.message.includes(e));
       },
       enableReadyCheck: true,
       connectTimeout: 10000,
+      keepAlive: 30000,
     });
     
-    redis.on('error', (err) => {
-      console.error('Redis connection error:', err.message);
+    globalForRedis.redis.on('error', (err) => {
+      console.error('Redis error:', err.message);
     });
     
-    redis.on('connect', () => {
-      console.log('Redis connected successfully');
+    globalForRedis.redis.on('ready', () => {
+      console.log('Redis ready');
     });
   }
-  return redis;
+  return globalForRedis.redis;
 }
 
 // Cache TTL: 7 days (webhook will refresh before this)
