@@ -90,11 +90,24 @@ export async function POST(request: NextRequest) {
       const files = await github.getAllMarkdownFiles(data.docsPath, data.branch);
       const docs: Record<string, ParsedDoc> = {};
       
+      // Clean docsPath - remove leading/trailing slashes
+      const cleanDocsPath = data.docsPath.replace(/^\/|\/$/g, '');
+      
       for (const file of files) {
-        const slug = file.path
-          .replace(data.docsPath, '')
-          .replace(/^\//, '')
-          .replace(/\.mdx?$/, '');
+        // Remove docsPath prefix and .md extension to get clean slug
+        let slug = file.path;
+        
+        // Remove docsPath prefix (handle both with and without leading slash)
+        if (slug.startsWith(cleanDocsPath + '/')) {
+          slug = slug.slice(cleanDocsPath.length + 1);
+        } else if (slug.startsWith('/' + cleanDocsPath + '/')) {
+          slug = slug.slice(cleanDocsPath.length + 2);
+        } else if (slug.startsWith(cleanDocsPath)) {
+          slug = slug.slice(cleanDocsPath.length);
+        }
+        
+        // Remove leading slash and .md/.mdx extension
+        slug = slug.replace(/^\//, '').replace(/\.mdx?$/, '');
         
         const parsed = await parseMarkdown(file.content, slug);
         docs[slug] = parsed;

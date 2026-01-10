@@ -44,8 +44,22 @@ function getRedis(): Redis {
       host,
       port,
       password,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
+      maxRetriesPerRequest: 5,
+      retryStrategy: (times) => {
+        // Exponential backoff with max 3 seconds
+        const delay = Math.min(times * 200, 3000);
+        console.log(`Redis retry attempt ${times}, waiting ${delay}ms`);
+        return delay;
+      },
+      reconnectOnError: (err) => {
+        const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+        if (targetErrors.some(e => err.message.includes(e))) {
+          return true;
+        }
+        return false;
+      },
+      enableReadyCheck: true,
+      connectTimeout: 10000,
     });
     
     redis.on('error', (err) => {
